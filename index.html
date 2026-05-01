@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vision Tech | Excellence Électrique, Solaire & Vidéosurveillance</title>
+    <meta name="description" content="Vision Tech - Expert en électricité générale, énergie solaire, vidéosurveillance et génie climatique à Yaoundé. Solutions innovantes et durables.">
+    <meta name="keywords" content="électricité, solaire, vidéosurveillance, climatisation, Yaoundé, Cameroun, Vision Tech">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://visiontech.netlify.app/">
+    <meta property="og:title" content="Vision Tech | Excellence Électrique & Solaire">
+    <meta property="og:description" content="Solutions professionnelles en électricité, énergie solaire et sécurité.">
+    <meta property="og:image" content="data/logo.jpeg">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary large image">
+    <meta property="twitter:title" content="Vision Tech | Excellence Électrique & Solaire">
+    <meta property="twitter:description" content="Expertise technique et satisfaction client à Yaoundé.">
+    <meta property="twitter:image" content="data/logo.jpeg">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Syne:wght@700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="index.css">
+    <style>
+        .gallery-item-new {
+            position: relative;
+            background: rgba(255, 255, 255, 0.08);
+            border: 2px solid rgba(245, 158, 11, 0.2);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .gallery-item-new:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(245, 158, 11, 0.3);
+            border-color: rgba(245, 158, 11, 0.5);
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .gallery-item-new img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+            display: block;
+        }
+
+        .gallery-item-new:hover img {
+            transform: scale(1.05);
+        }
+
+        .gallery-item-new::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(245, 158, 11, 0.1) 0%, transparent 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .gallery-item-new:hover::before {
+            opacity: 1;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        @keyframes animate-slow-zoom {
+            0% {
+                transform: scale(1);
+            }
+
+            100% {
+                transform: scale(1.1);
+            }
+        }
+
+        .animate-slow-zoom {
+            animation: animate-slow-zoom 20s ease-in-out infinite alternate;
+        }
+    </style>
+</head>
+
+<body class="bg-slate-950">
+    <!-- Navigation -->
+    <nav class="fixed top-6 left-0 right-0 z-50 flex justify-center px-4">
+        <div class="glass-card px-6 py-3 flex items-center justify-between w-full max-w-6xl">
+            <div class="flex items-center group cursor-pointer">
+                <div
+                    class="w-10 h-10 bg-white p-1 rounded-xl mr-3 transform group-hover:rotate-12 transition-transform shadow-lg">
+                    <img src="data/logo.jpeg" alt="Vision Tech Logo" class="w-full h-full object-contain">
+                </div>
+                <span class="text-xl font-extrabold text-gradient tracking-tight">Vision Tech</span>
+            </div>
+
+            <div class="hidden lg:flex items-center space-x-1">
+                <a href="#accueil"
+                    class="px-4 py-2 text-sm font-medium text-white hover:text-amber-400 transition-colors">Accueil</a>
+                <a href="#services"
+                    class="px-4 py-2 text-sm font-medium text-white hover:text-amber-400 transition-colors">Services</a>
+                <a href="#projets"
+                    class="px-4 py-2 text-sm font-medium text-white hover:text-amber-400 transition-colors">Projets</a>
+                <a href="#contact"
+                    class="ml-4 px-6 py-2 bg-amber-500 hover:bg-amber-400 text-slate-900 rounded-full text-sm font-bold transition-all transform hover:scale-105 shadow-lg shadow-amber-500/20">
+                    Contactez-nous
+                </a>
+            </div>
+
+            <button id="mobile-menu-btn" class="lg:hidden text-white p-2">
+                <i class="fas fa-bars-staggered text-xl"></i>
+            </button>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu"
+            class="hidden absolute top-20 left-4 right-4 glass-card p-6 flex flex-col space-y-4 lg:hidden">
+            <a href="#accueil" class="text-lg font-medium text-white">Accueil</a>
+            <a href="#services" class="text-lg font-medium text-white">Services</a>
+            <a href="#projets" class="text-lg font-medium text-white">Projets</a>
+            <a href="#contact" class="text-lg font-bold text-amber-400">Contact</a>
+        </div>
+    </nav>
+
+
+    <!-- Hero Section -->
+    <section id="accueil" class="relative min-h-screen flex items-center pt-24 overflow-hidden">
+        <!-- Background elements -->
+        <div class="absolute inset-0 z-0 overflow-hidden">
+            <img src="data/videosurveillance_photos/fond_resultat.webp" alt="Background"
+                class="w-full h-full object-cover opacity-50 animate-slow-zoom">
+            <div class="absolute inset-0 bg-gradient-to-b from-slate-950 via-slate-950/70 to-slate-950"></div>
+        </div>
+
+        <div class="container mx-auto px-4 z-10">
+            <div class="max-w-4xl mx-auto text-center">
+                <div class="inline-block px-4 py-1.5 mb-6 glass-card border-amber-500/30">
+                    <span class="text-amber-400 text-sm font-bold tracking-widest uppercase italic">Expertise • Qualité
+                        • Innovation</span>
+                </div>
+                <h1 class="text-5xl md:text-7xl font-black text-white mb-8 leading-[0.9] tracking-tighter animate-fade-in"
+                    style="font-family: 'Syne', sans-serif;">
+                    VOTRE SATISFACTION <br>
+                    <span class="text-gradient">NOTRE PRIORITÉ</span>
+                </h1>
+                <p class="text-xl md:text-2xl text-slate-300 mb-12 max-w-2xl mx-auto leading-relaxed">
+                    Vision Tech propulse vos projets vers le futur : Électricité haute performance, Solaire intelligent
+                    et Sécurité de pointe.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-6 justify-center">
+                    <a href="#services"
+                        class="px-10 py-5 bg-amber-500 hover:bg-amber-400 text-slate-900 rounded-2xl font-black text-lg transition-all transform hover:-translate-y-1 shadow-2xl shadow-amber-500/40">
+                        NOS SOLUTIONS
+                    </a>
+                    <a href="#contact"
+                        class="px-10 py-5 glass-card text-white hover:bg-white/10 rounded-2xl font-black text-lg transition-all transform hover:-translate-y-1">
+                        DEMANDER UN DEVIS
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Floating indicators -->
+        <div class="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce">
+            <i class="fas fa-chevron-down text-amber-500 text-2xl"></i>
+        </div>
+    </section>
+
+    <!-- Services Overview -->
+    <section id="services" class="py-32 relative">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-24">
+                <h2 class="text-4xl md:text-6xl font-black text-white mb-6" style="font-family: 'Syne', sans-serif;">
+                    NOS DOMAINES <span class="text-gradient">D'EXPERTISE</span>
+                </h2>
+                <div class="w-24 h-1 bg-amber-500 mx-auto rounded-full"></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Service 1 -->
+                <div class="glass-card p-8 service-card-new group">
+                    <div
+                        class="w-16 h-16 bg-amber-500/10 rounded-2xl flex items-center justify-center mb-8 group-hover:bg-amber-500 transition-colors duration-500">
+                        <i
+                            class="fas fa-bolt-lightning text-3xl text-amber-500 group-hover:text-slate-900 transition-colors duration-500"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-white mb-4">Électricité Générale</h3>
+                    <p class="text-slate-400 leading-relaxed mb-6">Installations complexes, domotique et maintenance
+                        industrielle de haute précision.</p>
+                    <a href="#electricite"
+                        class="text-amber-500 font-bold flex items-center group-hover:translate-x-2 transition-transform">
+                        Détails <i class="fas fa-arrow-right ml-2 text-sm"></i>
+                    </a>
+                </div>
+
+                <!-- Service 2 -->
+                <div class="glass-card p-8 service-card-new group">
+                    <div
+                        class="w-16 h-16 bg-amber-500/10 rounded-2xl flex items-center justify-center mb-8 group-hover:bg-amber-500 transition-colors duration-500">
+                        <i
+                            class="fas fa-shield-halved text-3xl text-amber-500 group-hover:text-slate-900 transition-colors duration-500"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-white mb-4">Vidéosurveillance</h3>
+                    <p class="text-slate-400 leading-relaxed mb-6">Systèmes intelligents, analyse d'image et protection
+                        périmétrique 24/7.</p>
+                    <a href="#videosurveillance"
+                        class="text-amber-500 font-bold flex items-center group-hover:translate-x-2 transition-transform">
+                        Détails <i class="fas fa-arrow-right ml-2 text-sm"></i>
+                    </a>
+                </div>
+
+                <!-- Service 3 -->
+                <div class="glass-card p-8 service-card-new group">
+                    <div
+                        class="w-16 h-16 bg-amber-500/10 rounded-2xl flex items-center justify-center mb-8 group-hover:bg-amber-500 transition-colors duration-500">
+                        <i
+                            class="fas fa-sun text-3xl text-amber-500 group-hover:text-slate-900 transition-colors duration-500"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-white mb-4">Énergie Solaire</h3>
+                    <p class="text-slate-400 leading-relaxed mb-6">Autoconsommation, stockage batterie et optimisation
+                        du rendement énergétique.</p>
+                    <a href="#solaire"
+                        class="text-amber-500 font-bold flex items-center group-hover:translate-x-2 transition-transform">
+                        Détails <i class="fas fa-arrow-right ml-2 text-sm"></i>
+                    </a>
+                </div>
+
+                <!-- Service 4 -->
+                <div class="glass-card p-8 service-card-new group">
+                    <div
+                        class="w-16 h-16 bg-amber-500/10 rounded-2xl flex items-center justify-center mb-8 group-hover:bg-amber-500 transition-colors duration-500">
+                        <i
+                            class="fas fa-snowflake text-3xl text-amber-500 group-hover:text-slate-900 transition-colors duration-500"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-white mb-4">Climatisation</h3>
+                    <p class="text-slate-400 leading-relaxed mb-6">Solutions de régulation thermique et froid industriel
+                        éco-responsable.</p>
+                    <a href="#climatisation"
+                        class="text-amber-500 font-bold flex items-center group-hover:translate-x-2 transition-transform">
+                        Détails <i class="fas fa-arrow-right ml-2 text-sm"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Électricité Générale Section -->
+    <section id="electricite" class="py-32 relative overflow-hidden">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+                <div class="animate-fade-in">
+                    <h2 class="text-4xl md:text-5xl font-black text-white mb-8"
+                        style="font-family: 'Syne', sans-serif;">
+                        ÉLECTRICITÉ <br>
+                        <span class="text-gradient">GÉNÉRALE</span>
+                    </h2>
+                    <p class="text-slate-400 text-lg mb-10 leading-relaxed">
+                        De la conception à la réalisation, nous déployons des systèmes électriques robustes et
+                        intelligents. Notre approche allie sécurité normative et innovation technologique.
+                    </p>
+                    <div class="space-y-6 mb-12">
+                        <div class="flex items-start">
+                            <div class="w-12 h-12 glass-card flex items-center justify-center mr-6 border-amber-500/20">
+                                <i class="fas fa-check text-amber-500"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-white font-bold mb-1">Haute Tension & Domotique</h4>
+                                <p class="text-slate-500 text-sm">Contrôle intelligent et distribution optimisée.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="w-12 h-12 glass-card flex items-center justify-center mr-6 border-amber-500/20">
+                                <i class="fas fa-check text-amber-500"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-white font-bold mb-1">Audit & Mise en conformité</h4>
+                                <p class="text-slate-500 text-sm">Certification et diagnostic de performance.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-12">
+                        <a href="electricite.html"
+                            class="inline-flex items-center px-8 py-4 bg-amber-500/10 hover:bg-amber-500 text-amber-500 hover:text-slate-900 border border-amber-500/30 rounded-2xl font-bold transition-all transform hover:-translate-y-1 shadow-lg shadow-amber-500/10">
+                            VOIR TOUTES LES PHOTOS <i class="fas fa-images ml-3"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="relative group">
+                    <div
+                        class="absolute -inset-4 bg-amber-500/20 rounded-[2rem] blur-2xl group-hover:bg-amber-500/30 transition duration-1000">
+                    </div>
+                    <div class="relative glass-card overflow-hidden rounded-[2rem]">
+                        <img src="data/electricite/elec_resultat.webp" alt="Installation électrique Vision Tech"
+                            class="w-full h-[500px] object-cover transform group-hover:scale-105 transition duration-700">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Vidéosurveillance Section -->
+    <section id="videosurveillance" class="py-32 bg-slate-900/50">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+                <div class="order-2 lg:order-1 relative group">
+                    <div class="absolute -inset-4 bg-amber-500/10 rounded-[2rem] blur-2xl"></div>
+                    <div class="relative glass-card overflow-hidden rounded-[2rem]">
+                        <img src="data/videosurveillance_photos/camera_resultat.webp" alt="Installation vidéosurveillance Vision Tech"
+                            class="w-full h-[500px] object-cover">
+                    </div>
+                </div>
+                <div class="order-1 lg:order-2 animate-fade-in">
+                    <h2 class="text-4xl md:text-5xl font-black text-white mb-8"
+                        style="font-family: 'Syne', sans-serif;">
+                        SÉCURITÉ <br>
+                        <span class="text-gradient">INTELLIGENTE</span>
+                    </h2>
+                    <p class="text-slate-400 text-lg mb-10 leading-relaxed">
+                        Gardez un œil sur ce qui compte. Nos solutions de surveillance exploitent l'IA pour une
+                        détection précise et une tranquillité d'esprit totale.
+                    </p>
+                    <ul class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <li class="glass-card p-4 flex items-center space-x-3">
+                            <i class="fas fa-video text-amber-500"></i>
+                            <span class="text-sm font-medium">Caméras 4K UHD</span>
+                        </li>
+                        <li class="glass-card p-4 flex items-center space-x-3">
+                            <i class="fas fa-moon text-amber-500"></i>
+                            <span class="text-sm font-medium">Vision Nocturne</span>
+                        </li>
+                        <li class="glass-card p-4 flex items-center space-x-3">
+                            <i class="fas fa-mobile-screen text-amber-500"></i>
+                            <span class="text-sm font-medium">Accès Mobile Remote</span>
+                        </li>
+                        <li class="glass-card p-4 flex items-center space-x-3">
+                            <i class="fas fa-brain text-amber-500"></i>
+                            <span class="text-sm font-medium">Analyse IA</span>
+                        </li>
+                    </ul>
+                    <div class="mt-12">
+                        <a href="videosurveillance.html"
+                            class="inline-flex items-center px-8 py-4 bg-amber-500/10 hover:bg-amber-500 text-amber-500 hover:text-slate-900 border border-amber-500/30 rounded-2xl font-bold transition-all transform hover:-translate-y-1 shadow-lg shadow-amber-500/10">
+                            VOIR TOUTES LES PHOTOS <i class="fas fa-images ml-3"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Énergie Solaire Section -->
+    <section id="solaire" class="py-32">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+                <div class="animate-fade-in">
+                    <h2 class="text-4xl md:text-5xl font-black text-white mb-8"
+                        style="font-family: 'Syne', sans-serif;">
+                        ÉNERGIE <br>
+                        <span class="text-gradient">SOLAIRE</span>
+                    </h2>
+                    <p class="text-slate-400 text-lg mb-10 leading-relaxed">
+                        Transformez votre toit en centrale électrique. Nos installations photovoltaïques garantissent un
+                        rendement maximal et une indépendance énergétique durable.
+                    </p>
+                    <div class="glass-card p-8 border-amber-500/20">
+                        <h4 class="text-white font-bold mb-4 flex items-center">
+                            <i class="fas fa-leaf text-amber-500 mr-3"></i> Impact Durable
+                        </h4>
+                        <p class="text-slate-500 text-sm leading-relaxed">
+                            Réduisez vos factures jusqu'à 70% tout en diminuant votre empreinte carbone avec nos
+                            panneaux haute efficacité.
+                        </p>
+                    </div>
+                    <div class="mt-12">
+                        <a href="solaire.html"
+                            class="inline-flex items-center px-8 py-4 bg-amber-500/10 hover:bg-amber-500 text-amber-500 hover:text-slate-900 border border-amber-500/30 rounded-2xl font-bold transition-all transform hover:-translate-y-1 shadow-lg shadow-amber-500/10">
+                            VOIR TOUTES LES PHOTOS <i class="fas fa-images ml-3"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="relative group">
+                    <div class="absolute -inset-4 bg-amber-500/20 rounded-[2rem] blur-2xl"></div>
+                    <div class="relative glass-card overflow-hidden rounded-[2rem]">
+                        <img src="data/solaire/solaire.jpeg" alt="Installation solaire Vision Tech"
+                            class="w-full h-[500px] object-cover">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Froid et Climatisation Section -->
+    <section id="climatisation" class="py-32 bg-slate-900/50">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+                <div class="order-2 lg:order-1 relative group">
+                    <div class="absolute -inset-4 bg-amber-500/10 rounded-[2rem] blur-2xl"></div>
+                    <div class="relative glass-card overflow-hidden rounded-[2rem]">
+                        <img src="data/climatisation/clim.jpeg" alt="Installation climatisation Vision Tech"
+                            class="w-full h-auto max-h-[600px] object-contain mx-auto">
+                    </div>
+                </div>
+                <div class="order-1 lg:order-2 animate-fade-in">
+                    <h2 class="text-4xl md:text-5xl font-black text-white mb-8"
+                        style="font-family: 'Syne', sans-serif;">
+                        GÉNIE <br>
+                        <span class="text-gradient">CLIMATIQUE</span>
+                    </h2>
+                    <p class="text-slate-400 text-lg mb-10 leading-relaxed">
+                        Maîtrisez votre environnement. Nous installons des systèmes de climatisation et de froid
+                        industriel optimisés pour la performance énergétique.
+                    </p>
+                    <div class="grid grid-cols-2 gap-6">
+                        <div class="text-center p-6 glass-card border-amber-500/10">
+                            <i class="fas fa-fan text-2xl text-amber-500 mb-3"></i>
+                            <p class="text-xs font-bold text-white uppercase tracking-wider">Ventilation</p>
+                        </div>
+                        <div class="text-center p-6 glass-card border-amber-500/10">
+                            <i class="fas fa-temperature-arrow-down text-2xl text-amber-500 mb-3"></i>
+                            <p class="text-xs font-bold text-white uppercase tracking-wider">Froid Industriel</p>
+                        </div>
+                    </div>
+                    <div class="mt-12">
+                        <a href="climatisation.html"
+                            class="inline-flex items-center px-8 py-4 bg-amber-500/10 hover:bg-amber-500 text-amber-500 hover:text-slate-900 border border-amber-500/30 rounded-2xl font-bold transition-all transform hover:-translate-y-1 shadow-lg shadow-amber-500/10">
+                            VOIR TOUTES LES PHOTOS <i class="fas fa-images ml-3"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Process Section -->
+    <section class="py-24 relative overflow-hidden bg-slate-900/50">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16 animate-fade-in">
+                <h2 class="text-3xl md:text-5xl font-black text-white mb-4" style="font-family: 'Syne', sans-serif;">NOTRE <span class="text-gradient">MÉTHODE</span></h2>
+                <p class="text-slate-500">Un processus rigoureux pour des résultats d'exception.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="relative group">
+                    <div class="absolute -top-4 -left-4 text-8xl font-black text-white/5 group-hover:text-amber-500/10 transition-colors">01</div>
+                    <div class="glass-card p-10 border-white/5 relative z-10 h-full">
+                        <div class="w-16 h-16 bg-amber-500/10 flex items-center justify-center rounded-2xl mb-8 group-hover:bg-amber-500 transition-colors">
+                            <i class="fas fa-search text-amber-500 group-hover:text-slate-900 text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-4">Étude & Diagnostic</h3>
+                        <p class="text-slate-400 text-sm leading-relaxed">Nous analysons vos besoins et votre environnement pour proposer la solution technique la plus adaptée et optimisée.</p>
+                    </div>
+                </div>
+
+                <div class="relative group">
+                    <div class="absolute -top-4 -left-4 text-8xl font-black text-white/5 group-hover:text-amber-500/10 transition-colors">02</div>
+                    <div class="glass-card p-10 border-white/5 relative z-10 h-full">
+                        <div class="w-16 h-16 bg-amber-500/10 flex items-center justify-center rounded-2xl mb-8 group-hover:bg-amber-500 transition-colors">
+                            <i class="fas fa-tools text-amber-500 group-hover:text-slate-900 text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-4">Installation & Mise en service</h3>
+                        <p class="text-slate-400 text-sm leading-relaxed">Nos experts déploient vos équipements avec une précision chirurgicale, en respectant les délais et les normes de sécurité.</p>
+                    </div>
+                </div>
+
+                <div class="relative group">
+                    <div class="absolute -top-4 -left-4 text-8xl font-black text-white/5 group-hover:text-amber-500/10 transition-colors">03</div>
+                    <div class="glass-card p-10 border-white/5 relative z-10 h-full">
+                        <div class="w-16 h-16 bg-amber-500/10 flex items-center justify-center rounded-2xl mb-8 group-hover:bg-amber-500 transition-colors">
+                            <i class="fas fa-check-double text-amber-500 group-hover:text-slate-900 text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-4">Suivi & Maintenance</h3>
+                        <p class="text-slate-400 text-sm leading-relaxed">Nous assurons le bon fonctionnement de vos systèmes sur le long terme avec un support technique réactif et efficace.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Projects Showcase -->
+    <section class="py-12 relative overflow-hidden bg-slate-900">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <!-- Row 1 -->
+                <div class="h-64 rounded-2xl overflow-hidden group">
+                    <img src="data/electricite/IMG_20250619_153629_864_resultat.webp" alt="Projet Vision Tech" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                </div>
+                <div class="h-64 rounded-2xl overflow-hidden group md:mt-12">
+                    <img src="data/videosurveillance_photos/IMG_20250721_153351_097_resultat.webp" alt="Projet Vision Tech" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                </div>
+                <div class="h-64 rounded-2xl overflow-hidden group">
+                    <img src="data/solaire/WhatsApp_Image_2026-04-27_at_15.26.44.jpeg" alt="Projet Vision Tech" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                </div>
+                <div class="h-64 rounded-2xl overflow-hidden group md:mt-12">
+                    <img src="data/climatisation/WhatsApp_Image_2026-04-27_at_14.52.22.jpeg" alt="Projet Vision Tech" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                </div>
+                <!-- Row 2 -->
+                <div class="h-64 rounded-2xl overflow-hidden group md:-mt-6">
+                    <img src="data/electricite/IMG_20250821_124058_687_resultat.webp" alt="Projet Vision Tech" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                </div>
+                <div class="h-64 rounded-2xl overflow-hidden group">
+                    <img src="data/videosurveillance_photos/IMG_20250723_130944_355_resultat.webp" alt="Projet Vision Tech" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                </div>
+                <div class="h-64 rounded-2xl overflow-hidden group md:-mt-6">
+                    <img src="data/solaire/WhatsApp_Image_2026-04-27_at_15.26.49.jpeg" alt="Projet Vision Tech" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                </div>
+                <div class="h-64 rounded-2xl overflow-hidden group">
+                    <img src="data/climatisation/WhatsApp_Image_2026-04-27_at_14.51.08.jpeg" alt="Projet Vision Tech" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials & Trust Section -->
+    <section class="py-24 relative overflow-hidden bg-slate-900/30">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-12 items-center">
+                <div class="lg:col-span-1 animate-fade-in">
+                    <h2 class="text-4xl font-black text-white mb-6" style="font-family: 'Syne', sans-serif;">
+                        ILS NOUS FONT <br>
+                        <span class="text-gradient">CONFIANCE.</span>
+                    </h2>
+                    <p class="text-slate-400 mb-8">
+                        La satisfaction de nos clients est le moteur de notre excellence technique au quotidien.
+                    </p>
+                    <div class="flex items-center space-x-4">
+                        <div class="flex -space-x-3">
+                            <div class="w-10 h-10 rounded-full border-2 border-slate-900 bg-amber-500 flex items-center justify-center text-slate-900 font-bold text-xs">JD</div>
+                            <div class="w-10 h-10 rounded-full border-2 border-slate-900 bg-blue-500 flex items-center justify-center text-white font-bold text-xs">SM</div>
+                            <div class="w-10 h-10 rounded-full border-2 border-slate-900 bg-emerald-500 flex items-center justify-center text-white font-bold text-xs">RK</div>
+                        </div>
+                        <p class="text-sm text-slate-500 font-medium">+150 clients satisfaits</p>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="glass-card p-8 border-white/5 relative group">
+                        <div class="absolute top-6 right-8 text-amber-500/20 text-5xl font-serif">"</div>
+                        <p class="text-slate-300 italic mb-6 relative z-10">
+                            "Un service impeccable pour l'installation de mon système solaire. Équipe ponctuelle et matériel de haute qualité. Je recommande vivement Vision Tech."
+                        </p>
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-amber-500/20 rounded-full flex items-center justify-center mr-4">
+                                <i class="fas fa-user text-amber-500 text-sm"></i>
+                            </div>
+                            <div>
+                                <p class="text-white font-bold text-sm">M. Samuel Ngueme</p>
+                                <p class="text-slate-500 text-xs">Particulier - Yaoundé</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="glass-card p-8 border-white/5 relative group">
+                        <div class="absolute top-6 right-8 text-amber-500/20 text-5xl font-serif">"</div>
+                        <p class="text-slate-300 italic mb-6 relative z-10">
+                            "La vidéosurveillance de nos entrepôts est désormais gérée de main de maître. La technologie proposée est bluffante de précision."
+                        </p>
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-amber-500/20 rounded-full flex items-center justify-center mr-4">
+                                <i class="fas fa-building text-amber-500 text-sm"></i>
+                            </div>
+                            <div>
+                                <p class="text-white font-bold text-sm">Mme Aminata B.</p>
+                                <p class="text-slate-500 text-xs">Directrice Logistique</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Partners Logo Bar -->
+            <div class="mt-20 pt-20 border-t border-white/5">
+                <p class="text-center text-slate-500 text-xs font-bold uppercase tracking-[0.3em] mb-12">Nos Partenaires Technologiques</p>
+                <div class="flex flex-wrap justify-center items-center gap-12 opacity-40 grayscale hover:grayscale-0 transition-all duration-700">
+                    <span class="text-white font-black text-xl tracking-tighter">SCHNEIDER</span>
+                    <span class="text-white font-black text-xl tracking-tighter">LEGRAND</span>
+                    <span class="text-white font-black text-xl tracking-tighter">HIKVISION</span>
+                    <span class="text-white font-black text-xl tracking-tighter">DAHUA</span>
+                    <span class="text-white font-black text-xl tracking-tighter">VICTRON</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-32 relative overflow-hidden">
+        <div class="container mx-auto px-4">
+            <div class="max-w-6xl mx-auto">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
+                    <div class="animate-fade-in">
+                        <h2 class="text-4xl md:text-6xl font-black text-white mb-8"
+                            style="font-family: 'Syne', sans-serif;">
+                            LANCEZ VOTRE <br>
+                            <span class="text-gradient">PROJET.</span>
+                        </h2>
+                        <p class="text-slate-400 text-lg mb-12">
+                            Besoin d'un devis ou d'une étude technique ? Notre équipe vous répond sous 24h pour
+                            transformer vos idées en réalité.
+                        </p>
+
+                        <div class="space-y-8">
+                            <div class="flex items-center group">
+                                <div
+                                    class="w-14 h-14 glass-card flex items-center justify-center mr-6 group-hover:bg-amber-500 transition-colors">
+                                    <i class="fas fa-phone text-amber-500 group-hover:text-slate-900"></i>
+                                </div>
+                                <div>
+                                    <p class="text-slate-500 text-xs font-bold uppercase tracking-widest">Appelez-nous
+                                    </p>
+                                    <p class="text-white font-bold text-lg">680 42 93 04</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center group">
+                                <div
+                                    class="w-14 h-14 glass-card flex items-center justify-center mr-6 group-hover:bg-amber-500 transition-colors">
+                                    <i class="fab fa-whatsapp text-amber-500 group-hover:text-slate-900"></i>
+                                </div>
+                                <div>
+                                    <p class="text-slate-500 text-xs font-bold uppercase tracking-widest">WhatsApp
+                                        Business</p>
+                                    <p class="text-white font-bold text-lg">640 91 48 07</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center group">
+                                <div
+                                    class="w-14 h-14 glass-card flex items-center justify-center mr-6 group-hover:bg-amber-500 transition-colors">
+                                    <i class="fas fa-envelope text-amber-500 group-hover:text-slate-900"></i>
+                                </div>
+                                <div>
+                                    <p class="text-slate-500 text-xs font-bold uppercase tracking-widest">Email
+                                        Expertise</p>
+                                    <p class="text-white font-bold text-lg">visiontech237@gmail.com</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center group">
+                                <div
+                                    class="w-14 h-14 glass-card flex items-center justify-center mr-6 group-hover:bg-amber-500 transition-colors">
+                                    <i class="fas fa-map-marker-alt text-amber-500 group-hover:text-slate-900"></i>
+                                </div>
+                                <div>
+                                    <p class="text-slate-500 text-xs font-bold uppercase tracking-widest">Localisation
+                                    </p>
+                                    <p class="text-white font-bold text-lg">Damas, Yaoundé</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="glass-card p-10 border-white/5 relative">
+                        <div class="absolute -top-10 -right-10 w-40 h-40 bg-amber-500/10 blur-3xl rounded-full"></div>
+                        <form id="contact-form" class="space-y-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-slate-400 text-xs font-bold uppercase mb-2 ml-1">Nom
+                                        Complet</label>
+                                    <input type="text" id="name" name="name" required
+                                        class="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-4 text-white focus:outline-none focus:border-amber-500 focus:bg-white/10 transition-all">
+                                </div>
+                                <div>
+                                    <label
+                                        class="block text-slate-400 text-xs font-bold uppercase mb-2 ml-1">Email</label>
+                                    <input type="email" id="email" name="email"
+                                        class="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-4 text-white focus:outline-none focus:border-amber-500 focus:bg-white/10 transition-all">
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label
+                                        class="block text-slate-400 text-xs font-bold uppercase mb-2 ml-1">Téléphone</label>
+                                    <input type="tel" id="phone" name="phone" required
+                                        class="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-4 text-white focus:outline-none focus:border-amber-500 focus:bg-white/10 transition-all">
+                                </div>
+                                <div class="relative">
+                                    <label class="block text-slate-400 text-xs font-bold uppercase mb-2 ml-1">Type de
+                                        Projet</label>
+                                    <div class="relative group">
+                                        <select id="service" name="service"
+                                            class="w-full bg-white/10 border border-white/20 rounded-xl px-5 py-4 text-white focus:outline-none focus:border-amber-500 focus:bg-white/20 transition-all appearance-none cursor-pointer font-medium">
+                                            <option value="electricite" class="bg-slate-900 text-white">Électricité
+                                                Générale</option>
+                                            <option value="videosurveillance" class="bg-slate-900 text-white">
+                                                Vidéosurveillance</option>
+                                            <option value="solaire" class="bg-slate-900 text-white">Énergie Solaire
+                                            </option>
+                                            <option value="climatisation" class="bg-slate-900 text-white">Climatisation
+                                            </option>
+                                        </select>
+                                        <div
+                                            class="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-amber-500 group-hover:scale-110 transition-transform">
+                                            <i class="fas fa-chevron-down"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <label
+                                    class="block text-slate-400 text-xs font-bold uppercase mb-2 ml-1">Message</label>
+                                <textarea id="message" name="message" rows="4"
+                                    class="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-4 text-white focus:outline-none focus:border-amber-500 focus:bg-white/10 transition-all"></textarea>
+                            </div>
+                            <button type="submit"
+                                class="w-full bg-amber-500 hover:bg-amber-400 text-slate-900 font-black py-5 rounded-xl transition-all transform hover:scale-[1.02] active:scale-[0.98] shadow-xl shadow-amber-500/20">
+                                ENVOYER MA DEMANDE
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-20 border-t border-white/5">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-10">
+                <div class="flex items-center">
+                    <div class="w-12 h-12 bg-white p-1 rounded-xl mr-4 shadow-lg">
+                        <img src="data/logo.jpeg" alt="Vision Tech Logo" class="w-full h-full object-contain">
+                    </div>
+                    <div>
+                        <span class="text-2xl font-black text-white tracking-tighter">VISION TECH</span>
+                        <p
+                            class="text-amber-500 text-[10px] font-black tracking-[0.2em] uppercase italic leading-tight mt-1">
+                            VOTRE SATISFACTION <br>
+                            NOTRE PRIORITÉ
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex space-x-8 text-slate-500 text-sm font-medium">
+                    <a href="#" class="hover:text-white transition-colors">Confidentialité</a>
+                    <a href="#" class="hover:text-white transition-colors">Mentions Légales</a>
+                    <a href="#" class="hover:text-white transition-colors">Conditions</a>
+                </div>
+
+                <div class="text-right">
+                    <p class="text-slate-500 text-sm">© 2024 Vision Tech. Tous droits réservés.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+
+
+    <script>
+        // Mobile menu toggle
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+
+                const target = document.querySelector(targetId);
+                if (target) {
+                    const offset = 100;
+                    const bodyRect = document.body.getBoundingClientRect().top;
+                    const elementRect = target.getBoundingClientRect().top;
+                    const elementPosition = elementRect - bodyRect;
+                    const offsetPosition = elementPosition - offset;
+
+                    window.scrollTo({
+                        top: offsetPosition,
+                        behavior: 'smooth'
+                    });
+
+                    // Close mobile menu if open
+                    mobileMenu.classList.add('hidden');
+                }
+            });
+        });
+
+        // Contact form handling
+        const contactForm = document.getElementById('contact-form');
+        if (contactForm) {
+            contactForm.addEventListener('submit', function (e) {
+                e.preventDefault();
+
+                const name = document.getElementById('name').value;
+                const email = document.getElementById('email').value;
+                const phone = document.getElementById('phone').value;
+                const service = document.getElementById('service').value;
+                const message = document.getElementById('message').value;
+
+                const whatsappNumber = "237640914807";
+                const text = `*NOUVELLE DEMANDE DE DEVIS - VISION TECH*%0A%0A` +
+                    `*Nom:* ${name}%0A` +
+                    `*Email:* ${email}%0A` +
+                    `*Téléphone:* ${phone}%0A` +
+                    `*Type de Projet:* ${service}%0A` +
+                    `*Message:* ${message}`;
+
+                const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${text}`;
+
+                window.open(whatsappUrl, ' blank');
+
+                // Show feedback
+                const btn = this.querySelector('button');
+                const originalText = btn.innerText;
+                btn.innerText = 'REDIRECTION VERS WHATSAPP...';
+                setTimeout(() => {
+                    btn.innerText = originalText;
+                    this.reset();
+                }, 2000);
+            });
+        }
+
+        // Navbar scroll effect
+        const nav = document.querySelector('nav .glass-card');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                nav.style.paddingTop = '0.5rem';
+                nav.style.paddingBottom = '0.5rem';
+                nav.style.background = 'rgba(15, 23, 42, 0.9)';
+            } else {
+                nav.style.paddingTop = '0.75rem';
+                nav.style.paddingBottom = '0.75rem';
+                nav.style.background = 'rgba(255, 255, 255, 0.05)';
+            }
+        });
+
+        // Intersection Observer for Reveal Animations
+        const observerOptions = {
+            threshold: 0.15,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-fade-in');
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('section, .glass-card').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+            observer.observe(el);
+        });
+    </script>
+</body>
+
+</html>
