@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" data-theme="light">
 
 <head>
     <meta charset="UTF-8">
@@ -11,9 +11,98 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="index.css">
+    <link rel="manifest" href="manifest.webmanifest">
+    <meta name="theme-color" content="#f59e0b">
+    <link rel="apple-touch-icon" href="data/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="data/icon-192.png">
+    <style>
+        /* Lightbox */
+        #lightbox {
+            display: none; position: fixed; inset: 0; z-index: 9999;
+            background: rgba(0,0,0,0.95); backdrop-filter: blur(10px);
+            align-items: center; justify-content: center;
+            opacity: 0; transition: opacity 0.3s ease;
+        }
+        #lightbox.active { display: flex; opacity: 1; }
+        #lightbox img {
+            max-width: 90vw; max-height: 85vh; object-fit: contain;
+            border-radius: 12px; box-shadow: 0 40px 80px rgba(0,0,0,0.8);
+            transform: scale(0.9); transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+        }
+        #lightbox.active img { transform: scale(1); }
+        #lightbox-close, #lightbox-prev, #lightbox-next {
+            position: absolute; color: white; cursor: pointer;
+            width: 50px; height: 50px; display: flex;
+            align-items: center; justify-content: center;
+            border-radius: 50%; background: rgba(255,255,255,0.1);
+            transition: all 0.2s; border: 1px solid rgba(255,255,255,0.15);
+        }
+        #lightbox-close { top: 20px; right: 20px; font-size: 1.4rem; }
+        #lightbox-prev { left: 16px; top: 50%; transform: translateY(-50%); font-size: 1.2rem; }
+        #lightbox-next { right: 16px; top: 50%; transform: translateY(-50%); font-size: 1.2rem; }
+        #lightbox-close:hover, #lightbox-prev:hover, #lightbox-next:hover { background: rgba(245,158,11,0.5); }
+        #lightbox-counter {
+            position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+            color: rgba(255,255,255,0.6); font-size: 0.85rem; font-family: 'Outfit', sans-serif;
+        }
+        /* Floating WhatsApp */
+        #whatsapp-float {
+            position: fixed; bottom: 28px; right: 28px; z-index: 1000;
+            width: 58px; height: 58px; background: #25D366;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 8px 30px rgba(37,211,102,0.5);
+            transition: all 0.3s; text-decoration: none;
+        }
+        #whatsapp-float:hover { transform: scale(1.15) rotate(-8deg); }
+        #whatsapp-float::before {
+            content: ''; position: absolute; inset: -4px; border-radius: 50%;
+            background: rgba(37,211,102,0.3);
+            animation: waPing 2s cubic-bezier(0,0,0.2,1) infinite;
+        }
+        @keyframes waPing { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(1.6); opacity: 0; } }
+        #whatsapp-float i { color: white; font-size: 1.7rem; }
+        /* Floating Facebook */
+        #facebook-float {
+            position: fixed; bottom: 96px; right: 28px; z-index: 1000;
+            width: 58px; height: 58px; background: #1877F2;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 8px 30px rgba(24,119,242,0.5);
+            transition: all 0.3s; text-decoration: none;
+        }
+        #facebook-float:hover { transform: scale(1.15) rotate(8deg); background: #0d6efd; }
+        #facebook-float::before {
+            content: ''; position: absolute; inset: -4px; border-radius: 50%;
+            background: rgba(24,119,242,0.3);
+            animation: fbPing 2.5s cubic-bezier(0,0,0.2,1) infinite;
+        }
+        @keyframes fbPing { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(1.6); opacity: 0; } }
+        #facebook-float i { color: white; font-size: 1.7rem; }
+        /* Scroll to top */
+        #scroll-top {
+            position: fixed; bottom: 164px; right: 32px; z-index: 1000;
+            width: 46px; height: 46px; background: rgba(245,158,11,0.15);
+            border: 1px solid rgba(245,158,11,0.4); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; opacity: 0; pointer-events: none;
+            transform: translateY(20px); transition: all 0.3s;
+        }
+        #scroll-top.visible { opacity: 1; pointer-events: all; transform: translateY(0); }
+        #scroll-top:hover { background: rgba(245,158,11,0.8); transform: translateY(-4px); }
+        #scroll-top i { color: #f59e0b; font-size: 1rem; }
+        #scroll-top:hover i { color: #0f172a; }
+        /* Gallery cursor */
+        .gallery-card { cursor: zoom-in; }
+        .text-gradient {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+    </style>
 </head>
 
 <body class="bg-slate-950 text-white font-['Outfit',sans-serif]">
+    <!-- Brand Logo Watermark Background -->
+    <div class="site-watermark" aria-hidden="true"></div>
+
     <!-- Simple Nav -->
     <nav class="fixed top-6 left-0 right-0 z-50 flex justify-center px-4">
         <div class="glass-card px-6 py-3 flex items-center justify-between w-full max-w-6xl">
@@ -42,8 +131,8 @@
 
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 <!-- Nouvelles photos (Ordre inverse) -->
-                <div class="glass-card p-2 rounded-2xl group overflow-hidden">
-                    <img src="data/electricite/im11.jpeg" alt="Projet Électricité" class="w-full h-72 object-cover rounded-xl group-hover:scale-105 transition-transform duration-500">
+                <div class="glass-card p-2 rounded-2xl group overflow-hidden gallery-card">
+                    <img src="data/electricite/im11.jpeg" alt="Installation électrique Vision Tech - Projet industriel" class="w-full h-72 object-cover rounded-xl group-hover:scale-105 transition-transform duration-500">
                 </div>
                 <div class="glass-card p-2 rounded-2xl group overflow-hidden">
                     <img src="data/electricite/im10.jpeg" alt="Projet Électricité" class="w-full h-72 object-cover rounded-xl group-hover:scale-105 transition-transform duration-500">
@@ -108,9 +197,87 @@
         </div>
     </main>
 
-    <footer class="py-10 border-t border-white/5 text-center">
-        <p class="text-slate-500 text-sm">© 2024 Vision Tech. Tous droits réservés.</p>
+    <footer class="py-10 border-t border-white/5 text-center flex flex-col items-center gap-4">
+        <div class="flex items-center space-x-4">
+            <a href="https://www.facebook.com/share/1U4wZGBebn/" target="_blank" rel="noopener"
+                class="w-10 h-10 glass-card flex items-center justify-center hover:bg-[#1877F2] transition-colors rounded-xl text-slate-400 hover:text-white" aria-label="Facebook">
+                <i class="fab fa-facebook-f"></i>
+            </a>
+            <a href="https://wa.me/237640914807" target="_blank" rel="noopener"
+                class="w-10 h-10 glass-card flex items-center justify-center hover:bg-green-500 transition-colors rounded-xl text-slate-400 hover:text-white" aria-label="WhatsApp">
+                <i class="fab fa-whatsapp"></i>
+            </a>
+        </div>
+        <p class="text-slate-500 text-sm">© 2026 Vision Tech. Tous droits réservés.</p>
     </footer>
-</body>
 
-</html>
+    <!-- Floating WhatsApp -->
+    <a id="whatsapp-float" href="https://wa.me/237640914807?text=Bonjour%20Vision%20Tech%2C%20je%20souhaite%20un%20devis." target="_blank" rel="noopener" aria-label="WhatsApp">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+    <!-- Floating Facebook -->
+    <a id="facebook-float" href="https://www.facebook.com/share/1U4wZGBebn/" target="_blank" rel="noopener" aria-label="Facebook">
+        <i class="fab fa-facebook-f"></i>
+    </a>
+    <!-- Scroll to Top -->
+    <button id="scroll-top" aria-label="Retour en haut"><i class="fas fa-chevron-up"></i></button>
+    <!-- Lightbox -->
+    <div id="lightbox" role="dialog" aria-modal="true">
+        <button id="lightbox-close"><i class="fas fa-xmark"></i></button>
+        <button id="lightbox-prev"><i class="fas fa-chevron-left"></i></button>
+        <img id="lightbox-img" src="" alt="Projet électricité Vision Tech">
+        <button id="lightbox-next"><i class="fas fa-chevron-right"></i></button>
+        <div id="lightbox-counter"></div>
+    </div>
+
+    <script>
+        // Lightbox
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightbox-img');
+        const lightboxCounter = document.getElementById('lightbox-counter');
+        let galleryImages = [], currentIndex = 0;
+
+        const cards = document.querySelectorAll('.gallery-card');
+        cards.forEach((card, idx) => {
+            card.addEventListener('click', () => {
+                galleryImages = Array.from(cards).map(c => c.querySelector('img').src);
+                currentIndex = idx;
+                lightboxImg.src = galleryImages[currentIndex];
+                lightboxCounter.textContent = `${currentIndex + 1} / ${galleryImages.length}`;
+                lightbox.style.display = 'flex';
+                requestAnimationFrame(() => lightbox.classList.add('active'));
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            setTimeout(() => { lightbox.style.display = 'none'; document.body.style.overflow = ''; }, 300);
+        }
+        function navigate(dir) {
+            currentIndex = (currentIndex + dir + galleryImages.length) % galleryImages.length;
+            lightboxImg.style.opacity = '0';
+            setTimeout(() => {
+                lightboxImg.src = galleryImages[currentIndex];
+                lightboxCounter.textContent = `${currentIndex + 1} / ${galleryImages.length}`;
+                lightboxImg.style.opacity = '1';
+            }, 150);
+        }
+        lightboxImg.style.transition = 'opacity 0.15s';
+        document.getElementById('lightbox-close').addEventListener('click', closeLightbox);
+        document.getElementById('lightbox-prev').addEventListener('click', () => navigate(-1));
+        document.getElementById('lightbox-next').addEventListener('click', () => navigate(1));
+        lightbox.addEventListener('click', e => { if (e.target === lightbox) closeLightbox(); });
+        document.addEventListener('keydown', e => {
+            if (!lightbox.classList.contains('active')) return;
+            if (e.key === 'Escape') closeLightbox();
+            if (e.key === 'ArrowLeft') navigate(-1);
+            if (e.key === 'ArrowRight') navigate(1);
+        });
+        // Scroll to top
+        const scrollTopBtn = document.getElementById('scroll-top');
+        window.addEventListener('scroll', () => {
+            scrollTopBtn.classList.toggle('visible', window.scrollY > 400);
+        });
+        scrollTopBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    </script>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" data-theme="light">
 
 <head>
     <meta charset="UTF-8">
@@ -11,9 +11,16 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="index.css">
+    <link rel="manifest" href="manifest.webmanifest">
+    <meta name="theme-color" content="#f59e0b">
+    <link rel="apple-touch-icon" href="data/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="data/icon-192.png">
 </head>
 
 <body class="bg-slate-950 text-white font-['Outfit',sans-serif]">
+    <!-- Brand Logo Watermark Background -->
+    <div class="site-watermark" aria-hidden="true"></div>
+
     <!-- Simple Nav -->
     <nav class="fixed top-6 left-0 right-0 z-50 flex justify-center px-4">
         <div class="glass-card px-6 py-3 flex items-center justify-between w-full max-w-6xl">
@@ -90,8 +97,18 @@
         </div>
     </main>
 
-    <footer class="py-10 border-t border-white/5 text-center">
-        <p class="text-slate-500 text-sm">© 2024 Vision Tech. Tous droits réservés.</p>
+    <footer class="py-10 border-t border-white/5 text-center flex flex-col items-center gap-4">
+        <div class="flex items-center space-x-4">
+            <a href="https://www.facebook.com/share/1U4wZGBebn/" target="_blank" rel="noopener"
+                class="w-10 h-10 glass-card flex items-center justify-center hover:bg-[#1877F2] transition-colors rounded-xl text-slate-400 hover:text-white" aria-label="Facebook">
+                <i class="fab fa-facebook-f"></i>
+            </a>
+            <a href="https://wa.me/237640914807" target="_blank" rel="noopener"
+                class="w-10 h-10 glass-card flex items-center justify-center hover:bg-green-500 transition-colors rounded-xl text-slate-400 hover:text-white" aria-label="WhatsApp">
+                <i class="fab fa-whatsapp"></i>
+            </a>
+        </div>
+        <p class="text-slate-500 text-sm">© 2026 Vision Tech. Tous droits réservés.</p>
     </footer>
 </body>
 

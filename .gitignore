@@ -12,3 +12,5 @@ Thumbs.db
 node_modules/
 fix_webp.js
 cleanup.js
+*.idsig
+

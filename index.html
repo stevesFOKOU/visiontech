@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" data-theme="light">
 
 <head>
     <meta charset="UTF-8">
@@ -29,6 +29,18 @@
         href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Syne:wght@700;800&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="index.css">
+
+    <!-- Progressive Web App (PWA) & Mobile Web App Meta -->
+    <link rel="manifest" href="manifest.webmanifest">
+    <meta name="theme-color" content="#f59e0b">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Vision Tech">
+    <link rel="apple-touch-icon" href="data/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="64x64" href="data/favicon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="data/icon-192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="data/icon-512.png">
     <style>
         .gallery-item-new {
             position: relative;
@@ -93,22 +105,423 @@
         }
 
         @keyframes animate-slow-zoom {
-            0% {
-                transform: scale(1);
-            }
-
-            100% {
-                transform: scale(1.1);
-            }
+            0% { transform: scale(1); }
+            100% { transform: scale(1.1); }
         }
 
         .animate-slow-zoom {
             animation: animate-slow-zoom 20s ease-in-out infinite alternate;
         }
+
+        /* ===== LIGHTBOX ===== */
+        #lightbox {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: rgba(0,0,0,0.95);
+            backdrop-filter: blur(10px);
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        #lightbox.active {
+            display: flex;
+            opacity: 1;
+        }
+        #lightbox img {
+            max-width: 90vw;
+            max-height: 85vh;
+            object-fit: contain;
+            border-radius: 12px;
+            box-shadow: 0 40px 80px rgba(0,0,0,0.8);
+            transform: scale(0.9);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        #lightbox.active img {
+            transform: scale(1);
+        }
+        #lightbox-close {
+            position: absolute;
+            top: 20px;
+            right: 28px;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            transition: background 0.2s;
+        }
+        #lightbox-close:hover { background: rgba(245,158,11,0.4); }
+        #lightbox-prev, #lightbox-next {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            width: 52px;
+            height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            transition: all 0.2s;
+            border: 1px solid rgba(255,255,255,0.15);
+        }
+        #lightbox-prev { left: 20px; }
+        #lightbox-next { right: 20px; }
+        #lightbox-prev:hover, #lightbox-next:hover { background: rgba(245,158,11,0.4); border-color: rgba(245,158,11,0.6); }
+        #lightbox-counter {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255,255,255,0.6);
+            font-size: 0.85rem;
+            font-family: 'Outfit', sans-serif;
+            letter-spacing: 0.1em;
+        }
+        .lightbox-trigger { cursor: zoom-in; }
+
+        /* ===== FLOATING WHATSAPP ===== */
+        #whatsapp-float {
+            position: fixed;
+            bottom: 28px;
+            right: 28px;
+            z-index: 1000;
+            width: 60px;
+            height: 60px;
+            background: #25D366;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 30px rgba(37,211,102,0.5);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none;
+        }
+        #whatsapp-float:hover {
+            transform: scale(1.15) rotate(-8deg);
+            box-shadow: 0 12px 40px rgba(37,211,102,0.7);
+        }
+        #whatsapp-float i { color: white; font-size: 1.8rem; }
+        #whatsapp-float::before {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border-radius: 50%;
+            background: rgba(37,211,102,0.3);
+            animation: waPing 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+        }
+        @keyframes waPing {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(1.6); opacity: 0; }
+        }
+        #whatsapp-tooltip {
+            position: absolute;
+            right: 70px;
+            white-space: nowrap;
+            background: #1e293b;
+            color: white;
+            padding: 8px 14px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        #whatsapp-float:hover #whatsapp-tooltip { opacity: 1; }
+
+        /* ===== FLOATING FACEBOOK ===== */
+        #facebook-float {
+            position: fixed;
+            bottom: 100px;
+            right: 28px;
+            z-index: 1000;
+            width: 60px;
+            height: 60px;
+            background: #1877F2;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 30px rgba(24, 119, 242, 0.5);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none;
+        }
+        #facebook-float:hover {
+            transform: scale(1.15) rotate(8deg);
+            box-shadow: 0 12px 40px rgba(24, 119, 242, 0.75);
+            background: #0d6efd;
+        }
+        #facebook-float i { color: white; font-size: 1.8rem; }
+        #facebook-float::before {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border-radius: 50%;
+            background: rgba(24, 119, 242, 0.3);
+            animation: fbPing 2.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+        }
+        @keyframes fbPing {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(1.6); opacity: 0; }
+        }
+        #facebook-tooltip {
+            position: absolute;
+            right: 70px;
+            white-space: nowrap;
+            background: #1e293b;
+            color: white;
+            padding: 8px 14px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        #facebook-float:hover #facebook-tooltip { opacity: 1; }
+
+        /* ===== SCROLL TO TOP ===== */
+        #scroll-top {
+            position: fixed;
+            bottom: 172px;
+            right: 34px;
+            z-index: 1000;
+            width: 48px;
+            height: 48px;
+            background: rgba(245,158,11,0.15);
+            border: 1px solid rgba(245,158,11,0.4);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(20px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        #scroll-top.visible {
+            opacity: 1;
+            pointer-events: all;
+            transform: translateY(0);
+        }
+        #scroll-top:hover {
+            background: rgba(245,158,11,0.8);
+            transform: translateY(-4px);
+        }
+        #scroll-top i { color: #f59e0b; font-size: 1.1rem; transition: color 0.2s; }
+        #scroll-top:hover i { color: #0f172a; }
+
+        /* ===== NAV ACTIVE LINK ===== */
+        .nav-link { position: relative; }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 50%;
+            transform: translateX(-50%) scaleX(0);
+            width: 80%;
+            height: 2px;
+            background: #f59e0b;
+            border-radius: 2px;
+            transition: transform 0.3s ease;
+        }
+        .nav-link.active { color: #f59e0b !important; }
+        .nav-link.active::after { transform: translateX(-50%) scaleX(1); }
+
+        /* ===== MOBILE MENU ANIMATION ===== */
+        #mobile-menu {
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-16px) scale(0.97);
+            transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s ease;
+            pointer-events: none;
+            display: flex;
+        }
+        #mobile-menu.open {
+            opacity: 1 !important;
+            visibility: visible !important;
+            transform: translateY(0) scale(1) !important;
+            pointer-events: all !important;
+        }
+
+        /* ===== STATS COUNTER ===== */
+        .stat-number {
+            font-family: 'Syne', sans-serif;
+            background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            white-space: nowrap;
+            display: inline-block;
+        }
+
+        /* ===== TESTIMONIAL STARS ===== */
+        .stars { color: #f59e0b; letter-spacing: 2px; }
+
+        /* ===== TESTIMONIAL CAROUSEL ===== */
+        .testimonial-track {
+            display: flex;
+            gap: 1.5rem;
+            animation: scrollTestimonials 20s linear infinite;
+            width: max-content;
+        }
+        @keyframes scrollTestimonials {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        .testimonials-wrapper:hover .testimonial-track { animation-play-state: paused; }
+
+        /* ===== THEME UPGRADE ===== */
+        /* Per-service accent colors */
+        .service-elec  { --svc-color: #f59e0b; --svc-bg: rgba(245,158,11,0.12); }
+        .service-video { --svc-color: #22d3ee; --svc-bg: rgba(34,211,238,0.12); }
+        .service-solar { --svc-color: #34d399; --svc-bg: rgba(52,211,153,0.12); }
+        .service-clim  { --svc-color: #818cf8; --svc-bg: rgba(129,140,248,0.12); }
+
+        .service-card-typed .svc-icon-wrap {
+            background: var(--svc-bg);
+            transition: background 0.5s ease;
+        }
+        .service-card-typed .svc-icon { color: var(--svc-color); transition: color 0.5s ease; }
+        .service-card-typed:hover .svc-icon-wrap { background: var(--svc-color); }
+        .service-card-typed:hover .svc-icon { color: #0f172a; }
+        .service-card-typed .svc-link { color: var(--svc-color); }
+        .service-card-typed:hover { border-color: var(--svc-color) !important; }
+        .service-card-typed::before { background: radial-gradient(circle, color-mix(in srgb, var(--svc-color) 20%, transparent) 0%, transparent 70%) !important; }
+
+        /* Hero animated grid */
+        .hero-grid {
+            position: absolute; inset: 0;
+            background-image:
+                linear-gradient(rgba(245,158,11,0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(245,158,11,0.04) 1px, transparent 1px);
+            background-size: 60px 60px;
+            animation: gridShift 20s linear infinite;
+            pointer-events: none;
+        }
+        @keyframes gridShift {
+            0%   { transform: translateY(0); }
+            100% { transform: translateY(60px); }
+        }
+
+        /* Floating orbs on hero */
+        .hero-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            pointer-events: none;
+            animation: orbFloat 8s ease-in-out infinite alternate;
+        }
+        .hero-orb-1 { width: 400px; height: 400px; background: rgba(245,158,11,0.12); top: 10%; left: -5%; animation-delay: 0s; }
+        .hero-orb-2 { width: 300px; height: 300px; background: rgba(52,211,153,0.08); top: 40%; right: -5%; animation-delay: -3s; }
+        .hero-orb-3 { width: 200px; height: 200px; background: rgba(34,211,238,0.06); bottom: 10%; left: 30%; animation-delay: -6s; }
+        @keyframes orbFloat {
+            from { transform: translateY(0) scale(1); }
+            to   { transform: translateY(-30px) scale(1.1); }
+        }
+
+        /* Cameroon accent badge */
+        .cameroon-badge {
+            background: linear-gradient(135deg, #007A5E 0%, #CE1126 50%, #FCD116 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Section divider */
+        .section-wave {
+            position: absolute;
+            bottom: -1px; left: 0; right: 0;
+            height: 60px;
+            background: inherit;
+            clip-path: ellipse(55% 100% at 50% 0%);
+        }
+
+        /* Theme-aware background with Animated Slideshow Support */
+        html[data-theme="light"],
+        html[data-theme="light"] body,
+        html[data-theme="light"] .bg-rich-dark {
+            background-color: #f8fafc;
+            color: #0f172a !important;
+        }
+
+        html[data-theme="dark"],
+        html[data-theme="dark"] body,
+        html[data-theme="dark"] .bg-rich-dark {
+            background-color: #0a1628;
+            color: #f8fafc !important;
+        }
+
+        /* Hero overlays that allow the animated slideshow to shine through gracefully */
+        .hero-bg-overlay {
+            transition: background 0.4s ease;
+        }
+        html[data-theme="light"] .hero-bg-overlay {
+            background: linear-gradient(180deg, rgba(248, 250, 252, 0.35) 0%, rgba(241, 245, 249, 0.75) 100%) !important;
+        }
+        html[data-theme="dark"] .hero-bg-overlay {
+            background: linear-gradient(180deg, rgba(10, 22, 40, 0.4) 0%, rgba(15, 23, 42, 0.75) 100%) !important;
+        }
+        .section-glow::before {
+            content: '';
+            position: absolute; inset: 0;
+            background: radial-gradient(ellipse 80% 50% at 50% 0%, rgba(245,158,11,0.05) 0%, transparent 70%);
+            pointer-events: none;
+        }
     </style>
 </head>
 
-<body class="bg-slate-950">
+<body class="bg-rich-dark">
+    <!-- Dynamic Animated Background Slideshow (6 real project photos) -->
+    <div id="site-bg-slideshow" class="site-bg-slideshow" aria-hidden="true">
+        <!-- Slide 0: Énergie Solaire -->
+        <div class="bg-slide active" data-slide="0">
+            <div class="bg-slide-img" style="background-image: url('data/solaire/WhatsApp_Image_2026-04-27_at_15.26.49.jpeg');"></div>
+        </div>
+        <!-- Slide 1: Électricité Générale & Tableaux -->
+        <div class="bg-slide" data-slide="1">
+            <div class="bg-slide-img" style="background-image: url('data/electricite/elec_resultat.webp');"></div>
+        </div>
+        <!-- Slide 2: Climatisation & Génie Climatique -->
+        <div class="bg-slide" data-slide="2">
+            <div class="bg-slide-img" style="background-image: url('data/climatisation/clim.jpeg');"></div>
+        </div>
+        <!-- Slide 3: Vidéosurveillance & Sécurité -->
+        <div class="bg-slide" data-slide="3">
+            <div class="bg-slide-img" style="background-image: url('data/videosurveillance_photos/camera_resultat.webp');"></div>
+        </div>
+        <!-- Slide 4: Onduleurs & Stockage Énergie -->
+        <div class="bg-slide" data-slide="4">
+            <div class="bg-slide-img" style="background-image: url('data/solaire/WhatsApp_Image_2026-04-27_at_15.26.51.jpeg');"></div>
+        </div>
+        <!-- Slide 5: Chantiers & Installations Bâtiment -->
+        <div class="bg-slide" data-slide="5">
+            <div class="bg-slide-img" style="background-image: url('data/electricite/IMG_20250922_145051_261_resultat.webp');"></div>
+        </div>
+        <!-- Ambient Scrim -->
+        <div class="bg-slideshow-scrim"></div>
+    </div>
+
+    <!-- Brand Logo Watermark Background -->
+    <div class="site-watermark" aria-hidden="true"></div>
+
     <!-- Navigation -->
     <nav class="fixed top-6 left-0 right-0 z-50 flex justify-center px-4">
         <div class="glass-card px-6 py-3 flex items-center justify-between w-full max-w-6xl">
@@ -121,29 +534,56 @@
             </div>
 
             <div class="hidden lg:flex items-center space-x-1">
-                <a href="#accueil"
-                    class="px-4 py-2 text-sm font-medium text-white hover:text-amber-400 transition-colors">Accueil</a>
-                <a href="#services"
-                    class="px-4 py-2 text-sm font-medium text-white hover:text-amber-400 transition-colors">Services</a>
-                <a href="#projets"
-                    class="px-4 py-2 text-sm font-medium text-white hover:text-amber-400 transition-colors">Projets</a>
+                <a href="#accueil" data-section="accueil"
+                    class="nav-link px-4 py-2 text-sm font-medium text-white hover:text-amber-400 transition-colors">Accueil</a>
+                <a href="#services" data-section="services"
+                    class="nav-link px-4 py-2 text-sm font-medium text-white hover:text-amber-400 transition-colors">Services</a>
+                <a href="#projets" data-section="projets"
+                    class="nav-link px-4 py-2 text-sm font-medium text-white hover:text-amber-400 transition-colors">Projets</a>
+                <a href="https://www.facebook.com/share/1U4wZGBebn/" target="_blank" rel="noopener"
+                    class="w-8 h-8 rounded-full glass-card flex items-center justify-center text-slate-300 hover:text-white hover:bg-[#1877F2] transition-colors ml-2"
+                    aria-label="Facebook">
+                    <i class="fab fa-facebook-f text-xs"></i>
+                </a>
                 <a href="#contact"
-                    class="ml-4 px-6 py-2 bg-amber-500 hover:bg-amber-400 text-slate-900 rounded-full text-sm font-bold transition-all transform hover:scale-105 shadow-lg shadow-amber-500/20">
+                    class="ml-3 px-6 py-2 bg-amber-500 hover:bg-amber-400 text-slate-900 rounded-full text-sm font-bold transition-all transform hover:scale-105 shadow-lg shadow-amber-500/20">
                     Contactez-nous
                 </a>
             </div>
 
-            <button id="mobile-menu-btn" class="lg:hidden text-white p-2">
-                <i class="fas fa-bars-staggered text-xl"></i>
-            </button>
+                <!-- Direct App Download / Install Button -->
+                <button id="btn-install-app" class="px-3.5 py-1.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 rounded-full font-black text-xs sm:text-sm flex items-center gap-1.5 shadow-md shadow-amber-500/25 transition-all transform hover:scale-105" aria-label="Télécharger l'application Vision Tech" title="Télécharger l'application Vision Tech">
+                    <i class="fas fa-download"></i>
+                    <span class="hidden sm:inline">Télécharger l'app</span>
+                    <span class="sm:hidden text-xs">Télécharger</span>
+                </button>
+
+                <!-- Theme Toggle -->
+                <button id="theme-toggle" aria-label="Basculer le thème">
+                    <i id="theme-icon" class="fas fa-moon"></i>
+                </button>
+
+                <button id="mobile-menu-btn" class="lg:hidden text-white p-2 rounded-xl hover:bg-white/10 transition-colors" aria-label="Menu">
+                    <i id="menu-icon" class="fas fa-bars-staggered text-xl transition-all duration-300"></i>
+                </button>
+            </div>
         </div>
 
         <!-- Mobile Menu -->
         <div id="mobile-menu"
-            class="hidden absolute top-20 left-4 right-4 glass-card p-6 flex flex-col space-y-4 lg:hidden">
-            <a href="#accueil" class="text-lg font-medium text-white">Accueil</a>
-            <a href="#services" class="text-lg font-medium text-white">Services</a>
-            <a href="#projets" class="text-lg font-medium text-white">Projets</a>
+            class="absolute top-20 left-4 right-4 glass-card p-6 flex flex-col space-y-4 lg:hidden z-50 shadow-2xl border border-white/15">
+            <a href="#accueil" class="text-lg font-medium text-white hover:text-amber-400 transition-colors">Accueil</a>
+            <a href="#services" class="text-lg font-medium text-white hover:text-amber-400 transition-colors">Services</a>
+            <a href="#projets" class="text-lg font-medium text-white hover:text-amber-400 transition-colors">Projets</a>
+            <a href="https://www.facebook.com/share/1U4wZGBebn/" target="_blank" rel="noopener"
+                class="text-lg font-medium text-slate-300 hover:text-blue-400 flex items-center gap-3 transition-colors">
+                <i class="fab fa-facebook-f text-[#1877F2]"></i> Page Facebook
+            </a>
+            <!-- Mobile Install Button -->
+            <button id="mobile-install-btn" class="w-full py-3 px-4 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-black rounded-xl flex items-center justify-center gap-2.5 shadow-lg shadow-amber-500/30 transition-all">
+                <i class="fas fa-download text-lg"></i>
+                <span>Télécharger l'application</span>
+            </button>
             <a href="#contact" class="text-lg font-bold text-amber-400">Contact</a>
         </div>
     </nav>
@@ -153,23 +593,29 @@
     <section id="accueil" class="relative min-h-screen flex items-center pt-24 overflow-hidden">
         <!-- Background elements -->
         <div class="absolute inset-0 z-0 overflow-hidden">
-            <img src="data/videosurveillance_photos/fond_resultat.webp" alt="Background"
-                class="w-full h-full object-cover opacity-50 animate-slow-zoom">
-            <div class="absolute inset-0 bg-gradient-to-b from-slate-950 via-slate-950/70 to-slate-950"></div>
+            <div class="hero-bg-overlay absolute inset-0"></div>
+            <!-- Animated grid overlay -->
+            <div class="hero-grid"></div>
+            <!-- Floating color orbs -->
+            <div class="hero-orb hero-orb-1"></div>
+            <div class="hero-orb hero-orb-2"></div>
+            <div class="hero-orb hero-orb-3"></div>
         </div>
 
         <div class="container mx-auto px-4 z-10">
             <div class="max-w-4xl mx-auto text-center">
-                <div class="inline-block px-4 py-1.5 mb-6 glass-card border-amber-500/30">
-                    <span class="text-amber-400 text-sm font-bold tracking-widest uppercase italic">Expertise • Qualité
-                        • Innovation</span>
+                <!-- Cameroon identity badge -->
+                <div class="inline-flex items-center gap-2 px-5 py-2 mb-8 glass-card border-amber-500/30">
+                    <span class="text-xs font-black tracking-widest uppercase cameroon-badge">🇨🇲 Cameroun</span>
+                    <span class="text-slate-500 text-xs">|</span>
+                    <span class="text-amber-400 text-xs font-bold tracking-widest uppercase">Douala · Yaoundé</span>
                 </div>
-                <h1 class="text-3xl sm:text-5xl md:text-7xl leading-tight py-2 font-black text-white mb-8 leading-tight tracking-tighter animate-fade-in py-2"
+                <h1 class="text-[1.75rem] sm:text-4xl md:text-6xl lg:text-7xl leading-tight py-2 font-black text-white mb-6 md:mb-8 tracking-tighter animate-fade-in"
                     style="font-family: 'Syne', sans-serif;">
                     VOTRE SATISFACTION <br>
                     <span class="text-gradient">NOTRE PRIORITÉ</span>
                 </h1>
-                <p class="text-xl md:text-2xl text-slate-300 mb-12 max-w-2xl mx-auto leading-relaxed">
+                <p class="text-base sm:text-xl md:text-2xl text-slate-300 mb-8 sm:mb-12 max-w-2xl mx-auto leading-relaxed">
                     Vision Tech propulse vos projets vers le futur : Électricité haute performance, Solaire intelligent
                     et Sécurité de pointe.
                 </p>
@@ -179,9 +625,24 @@
                         NOS SOLUTIONS
                     </a>
                     <a href="#contact"
-                        class="px-10 py-5 glass-card text-white hover:bg-white/10 rounded-2xl font-black text-lg transition-all transform hover:-translate-y-1">
+                        class="px-10 py-5 glass-card text-white hover:bg-white/10 border border-white/20 hover:border-amber-500/40 rounded-2xl font-black text-lg transition-all transform hover:-translate-y-1">
                         DEMANDER UN DEVIS
                     </a>
+                </div>
+                <!-- Trust indicators -->
+                <div class="flex items-center justify-center gap-8 mt-14 flex-wrap">
+                    <div class="flex items-center gap-2 text-slate-400 text-sm">
+                        <i class="fas fa-shield-check text-emerald-400"></i>
+                        <span>Certifié & Garanti</span>
+                    </div>
+                    <div class="flex items-center gap-2 text-slate-400 text-sm">
+                        <i class="fas fa-clock text-amber-400"></i>
+                        <span>Réponse sous 24h</span>
+                    </div>
+                    <div class="flex items-center gap-2 text-slate-400 text-sm">
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <span>+150 clients satisfaits</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -195,74 +656,58 @@
     <!-- Services Overview -->
     <section id="services" class="py-32 relative">
         <div class="container mx-auto px-4">
-            <div class="text-center mb-24">
-                <h2 class="text-4xl md:text-6xl font-black text-white mb-6" style="font-family: 'Syne', sans-serif;">
+            <div class="text-center mb-16 sm:mb-24">
+                <h2 class="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white mb-4 sm:mb-6" style="font-family: 'Syne', sans-serif;">
                     NOS DOMAINES <span class="text-gradient">D'EXPERTISE</span>
                 </h2>
                 <div class="w-24 h-1 bg-amber-500 mx-auto rounded-full"></div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                <!-- Service 1 -->
-                <div class="glass-card p-8 service-card-new group">
-                    <div
-                        class="w-16 h-16 bg-amber-500/10 rounded-2xl flex items-center justify-center mb-8 group-hover:bg-amber-500 transition-colors duration-500">
-                        <i
-                            class="fas fa-bolt-lightning text-3xl text-amber-500 group-hover:text-slate-900 transition-colors duration-500"></i>
+                <!-- Service 1 — Électricité (Amber) -->
+                <div class="glass-card p-8 service-card-new service-card-typed service-elec group">
+                    <div class="svc-icon-wrap w-16 h-16 rounded-2xl flex items-center justify-center mb-8">
+                        <i class="fas fa-bolt-lightning text-3xl svc-icon"></i>
                     </div>
                     <h3 class="text-2xl font-bold text-white mb-4">Électricité Générale</h3>
-                    <p class="text-slate-400 leading-relaxed mb-6">Installations complexes, domotique et maintenance
-                        industrielle de haute précision.</p>
-                    <a href="#electricite"
-                        class="text-amber-500 font-bold flex items-center group-hover:translate-x-2 transition-transform">
+                    <p class="text-slate-400 leading-relaxed mb-6">Installations complexes, domotique et maintenance industrielle de haute précision.</p>
+                    <a href="#electricite" class="svc-link font-bold flex items-center group-hover:translate-x-2 transition-transform">
                         Détails <i class="fas fa-arrow-right ml-2 text-sm"></i>
                     </a>
                 </div>
 
-                <!-- Service 2 -->
-                <div class="glass-card p-8 service-card-new group">
-                    <div
-                        class="w-16 h-16 bg-amber-500/10 rounded-2xl flex items-center justify-center mb-8 group-hover:bg-amber-500 transition-colors duration-500">
-                        <i
-                            class="fas fa-shield-halved text-3xl text-amber-500 group-hover:text-slate-900 transition-colors duration-500"></i>
+                <!-- Service 2 — Vidéosurveillance (Cyan) -->
+                <div class="glass-card p-8 service-card-new service-card-typed service-video group">
+                    <div class="svc-icon-wrap w-16 h-16 rounded-2xl flex items-center justify-center mb-8">
+                        <i class="fas fa-shield-halved text-3xl svc-icon"></i>
                     </div>
                     <h3 class="text-2xl font-bold text-white mb-4">Vidéosurveillance</h3>
-                    <p class="text-slate-400 leading-relaxed mb-6">Systèmes intelligents, analyse d'image et protection
-                        périmétrique 24/7.</p>
-                    <a href="#videosurveillance"
-                        class="text-amber-500 font-bold flex items-center group-hover:translate-x-2 transition-transform">
+                    <p class="text-slate-400 leading-relaxed mb-6">Systèmes intelligents, analyse d'image et protection périmétrique 24/7.</p>
+                    <a href="#videosurveillance" class="svc-link font-bold flex items-center group-hover:translate-x-2 transition-transform">
                         Détails <i class="fas fa-arrow-right ml-2 text-sm"></i>
                     </a>
                 </div>
 
-                <!-- Service 3 -->
-                <div class="glass-card p-8 service-card-new group">
-                    <div
-                        class="w-16 h-16 bg-amber-500/10 rounded-2xl flex items-center justify-center mb-8 group-hover:bg-amber-500 transition-colors duration-500">
-                        <i
-                            class="fas fa-sun text-3xl text-amber-500 group-hover:text-slate-900 transition-colors duration-500"></i>
+                <!-- Service 3 — Solaire (Emerald) -->
+                <div class="glass-card p-8 service-card-new service-card-typed service-solar group">
+                    <div class="svc-icon-wrap w-16 h-16 rounded-2xl flex items-center justify-center mb-8">
+                        <i class="fas fa-sun text-3xl svc-icon"></i>
                     </div>
                     <h3 class="text-2xl font-bold text-white mb-4">Énergie Solaire</h3>
-                    <p class="text-slate-400 leading-relaxed mb-6">Autoconsommation, stockage batterie et optimisation
-                        du rendement énergétique.</p>
-                    <a href="#solaire"
-                        class="text-amber-500 font-bold flex items-center group-hover:translate-x-2 transition-transform">
+                    <p class="text-slate-400 leading-relaxed mb-6">Autoconsommation, stockage batterie et optimisation du rendement énergétique.</p>
+                    <a href="#solaire" class="svc-link font-bold flex items-center group-hover:translate-x-2 transition-transform">
                         Détails <i class="fas fa-arrow-right ml-2 text-sm"></i>
                     </a>
                 </div>
 
-                <!-- Service 4 -->
-                <div class="glass-card p-8 service-card-new group">
-                    <div
-                        class="w-16 h-16 bg-amber-500/10 rounded-2xl flex items-center justify-center mb-8 group-hover:bg-amber-500 transition-colors duration-500">
-                        <i
-                            class="fas fa-snowflake text-3xl text-amber-500 group-hover:text-slate-900 transition-colors duration-500"></i>
+                <!-- Service 4 — Climatisation (Indigo) -->
+                <div class="glass-card p-8 service-card-new service-card-typed service-clim group">
+                    <div class="svc-icon-wrap w-16 h-16 rounded-2xl flex items-center justify-center mb-8">
+                        <i class="fas fa-snowflake text-3xl svc-icon"></i>
                     </div>
                     <h3 class="text-2xl font-bold text-white mb-4">Climatisation</h3>
-                    <p class="text-slate-400 leading-relaxed mb-6">Solutions de régulation thermique et froid industriel
-                        éco-responsable.</p>
-                    <a href="#climatisation"
-                        class="text-amber-500 font-bold flex items-center group-hover:translate-x-2 transition-transform">
+                    <p class="text-slate-400 leading-relaxed mb-6">Solutions de régulation thermique et froid industriel éco-responsable.</p>
+                    <a href="#climatisation" class="svc-link font-bold flex items-center group-hover:translate-x-2 transition-transform">
                         Détails <i class="fas fa-arrow-right ml-2 text-sm"></i>
                     </a>
                 </div>
@@ -270,13 +715,40 @@
         </div>
     </section>
 
+    <!-- Stats Section -->
+    <section class="py-20 bg-slate-900/40 backdrop-blur-md border-y border-white/5">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+                <div class="text-center group">
+                    <div class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black stat-number mb-2" data-target="150" data-suffix="+">0</div>
+                    <div class="w-12 h-0.5 bg-amber-500/40 mx-auto mb-3"></div>
+                    <p class="text-slate-400 text-xs sm:text-sm font-medium uppercase tracking-widest">Clients Satisfaits</p>
+                </div>
+                <div class="text-center group">
+                    <div class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black stat-number mb-2" data-target="200" data-suffix="+">0</div>
+                    <div class="w-12 h-0.5 bg-amber-500/40 mx-auto mb-3"></div>
+                    <p class="text-slate-400 text-xs sm:text-sm font-medium uppercase tracking-widest">Projets Réalisés</p>
+                </div>
+                <div class="text-center group">
+                    <div class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black stat-number mb-2" data-target="5" data-suffix=" ans">0</div>
+                    <div class="w-12 h-0.5 bg-amber-500/40 mx-auto mb-3"></div>
+                    <p class="text-slate-400 text-xs sm:text-sm font-medium uppercase tracking-widest">D'Expérience</p>
+                </div>
+                <div class="text-center group">
+                    <div class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black stat-number mb-2" data-target="100" data-suffix="%">0</div>
+                    <div class="w-12 h-0.5 bg-amber-500/40 mx-auto mb-3"></div>
+                    <p class="text-slate-400 text-xs sm:text-sm font-medium uppercase tracking-widest">Garantie Qualité</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <!-- Électricité Générale Section -->
     <section id="electricite" class="py-32 relative overflow-hidden">
         <div class="container mx-auto px-4">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
                 <div class="animate-fade-in">
-                    <h2 class="text-4xl md:text-5xl font-black text-white mb-8"
+                    <h2 class="text-2xl sm:text-3xl md:text-5xl font-black text-white mb-6 md:mb-8"
                         style="font-family: 'Syne', sans-serif;">
                         ÉLECTRICITÉ <br>
                         <span class="text-gradient">GÉNÉRALE</span>
@@ -326,7 +798,7 @@
     </section>
 
     <!-- Vidéosurveillance Section -->
-    <section id="videosurveillance" class="py-32 bg-slate-900/50">
+    <section id="videosurveillance" class="py-32 bg-slate-900/35 backdrop-blur-sm">
         <div class="container mx-auto px-4">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
                 <div class="order-2 lg:order-1 relative group">
@@ -337,7 +809,7 @@
                     </div>
                 </div>
                 <div class="order-1 lg:order-2 animate-fade-in">
-                    <h2 class="text-4xl md:text-5xl font-black text-white mb-8"
+                    <h2 class="text-2xl sm:text-3xl md:text-5xl font-black text-white mb-6 md:mb-8"
                         style="font-family: 'Syne', sans-serif;">
                         SÉCURITÉ <br>
                         <span class="text-gradient">INTELLIGENTE</span>
@@ -380,7 +852,7 @@
         <div class="container mx-auto px-4">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
                 <div class="animate-fade-in">
-                    <h2 class="text-4xl md:text-5xl font-black text-white mb-8"
+                    <h2 class="text-2xl sm:text-3xl md:text-5xl font-black text-white mb-6 md:mb-8"
                         style="font-family: 'Syne', sans-serif;">
                         ÉNERGIE <br>
                         <span class="text-gradient">SOLAIRE</span>
@@ -417,7 +889,7 @@
     </section>
 
     <!-- Froid et Climatisation Section -->
-    <section id="climatisation" class="py-32 bg-slate-900/50">
+    <section id="climatisation" class="py-32 bg-slate-900/35 backdrop-blur-sm">
         <div class="container mx-auto px-4">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
                 <div class="order-2 lg:order-1 relative group">
@@ -428,7 +900,7 @@
                     </div>
                 </div>
                 <div class="order-1 lg:order-2 animate-fade-in">
-                    <h2 class="text-4xl md:text-5xl font-black text-white mb-8"
+                    <h2 class="text-2xl sm:text-3xl md:text-5xl font-black text-white mb-6 md:mb-8"
                         style="font-family: 'Syne', sans-serif;">
                         GÉNIE <br>
                         <span class="text-gradient">CLIMATIQUE</span>
@@ -459,16 +931,16 @@
     </section>
 
     <!-- Process Section -->
-    <section class="py-24 relative overflow-hidden bg-slate-900/50">
+    <section class="py-24 relative overflow-hidden bg-slate-900/35 backdrop-blur-sm">
         <div class="container mx-auto px-4">
             <div class="text-center mb-16 animate-fade-in">
-                <h2 class="text-3xl md:text-5xl font-black text-white mb-4" style="font-family: 'Syne', sans-serif;">NOTRE <span class="text-gradient">MÉTHODE</span></h2>
+                <h2 class="text-2xl sm:text-3xl md:text-5xl font-black text-white mb-4" style="font-family: 'Syne', sans-serif;">NOTRE <span class="text-gradient">MÉTHODE</span></h2>
                 <p class="text-slate-500">Un processus rigoureux pour des résultats d'exception.</p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div class="relative group">
-                    <div class="absolute -top-4 left-0 md:-left-4 text-8xl font-black text-white/5 group-hover:text-amber-500/10 transition-colors">01</div>
+                    <div class="absolute -top-3 left-2 md:-left-4 text-6xl sm:text-7xl md:text-8xl font-black text-white/5 group-hover:text-amber-500/10 transition-colors select-none">01</div>
                     <div class="glass-card p-10 border-white/5 relative z-10 h-full">
                         <div class="w-16 h-16 bg-amber-500/10 flex items-center justify-center rounded-2xl mb-8 group-hover:bg-amber-500 transition-colors">
                             <i class="fas fa-search text-amber-500 group-hover:text-slate-900 text-2xl"></i>
@@ -479,7 +951,7 @@
                 </div>
 
                 <div class="relative group">
-                    <div class="absolute -top-4 left-0 md:-left-4 text-8xl font-black text-white/5 group-hover:text-amber-500/10 transition-colors">02</div>
+                    <div class="absolute -top-3 left-2 md:-left-4 text-6xl sm:text-7xl md:text-8xl font-black text-white/5 group-hover:text-amber-500/10 transition-colors select-none">02</div>
                     <div class="glass-card p-10 border-white/5 relative z-10 h-full">
                         <div class="w-16 h-16 bg-amber-500/10 flex items-center justify-center rounded-2xl mb-8 group-hover:bg-amber-500 transition-colors">
                             <i class="fas fa-tools text-amber-500 group-hover:text-slate-900 text-2xl"></i>
@@ -490,7 +962,7 @@
                 </div>
 
                 <div class="relative group">
-                    <div class="absolute -top-4 left-0 md:-left-4 text-8xl font-black text-white/5 group-hover:text-amber-500/10 transition-colors">03</div>
+                    <div class="absolute -top-3 left-2 md:-left-4 text-6xl sm:text-7xl md:text-8xl font-black text-white/5 group-hover:text-amber-500/10 transition-colors select-none">03</div>
                     <div class="glass-card p-10 border-white/5 relative z-10 h-full">
                         <div class="w-16 h-16 bg-amber-500/10 flex items-center justify-center rounded-2xl mb-8 group-hover:bg-amber-500 transition-colors">
                             <i class="fas fa-check-double text-amber-500 group-hover:text-slate-900 text-2xl"></i>
@@ -504,7 +976,7 @@
     </section>
 
     <!-- Featured Projects Showcase -->
-    <section class="py-12 relative overflow-hidden bg-slate-900">
+    <section id="projets" class="py-12 relative overflow-hidden bg-slate-900/40 backdrop-blur-md border-y border-white/5">
         <div class="container mx-auto px-4">
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <!-- Row 1 -->
@@ -538,32 +1010,33 @@
     </section>
 
     <!-- Testimonials & Trust Section -->
-    <section class="py-24 relative overflow-hidden bg-slate-900/30">
+    <section class="py-24 relative overflow-hidden bg-slate-900/30 backdrop-blur-sm">
         <div class="container mx-auto px-4">
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-12 items-center">
-                <div class="lg:col-span-1 animate-fade-in">
-                    <h2 class="text-4xl font-black text-white mb-6" style="font-family: 'Syne', sans-serif;">
-                        ILS NOUS FONT <br>
-                        <span class="text-gradient">CONFIANCE.</span>
-                    </h2>
-                    <p class="text-slate-400 mb-8">
-                        La satisfaction de nos clients est le moteur de notre excellence technique au quotidien.
-                    </p>
-                    <div class="flex items-center space-x-4">
-                        <div class="flex -space-x-3">
-                            <div class="w-10 h-10 rounded-full border-2 border-slate-900 bg-amber-500 flex items-center justify-center text-slate-900 font-bold text-xs">JD</div>
-                            <div class="w-10 h-10 rounded-full border-2 border-slate-900 bg-blue-500 flex items-center justify-center text-white font-bold text-xs">SM</div>
-                            <div class="w-10 h-10 rounded-full border-2 border-slate-900 bg-emerald-500 flex items-center justify-center text-white font-bold text-xs">RK</div>
-                        </div>
-                        <p class="text-sm text-slate-500 font-medium">+150 clients satisfaits</p>
+            <div class="text-center mb-16">
+                <h2 class="text-2xl sm:text-3xl md:text-4xl font-black text-white mb-4" style="font-family: 'Syne', sans-serif;">
+                    ILS NOUS FONT <span class="text-gradient">CONFIANCE.</span>
+                </h2>
+                <p class="text-slate-400">La satisfaction de nos clients est notre moteur.</p>
+                <div class="flex items-center justify-center space-x-4 mt-6">
+                    <div class="flex -space-x-3">
+                        <div class="w-10 h-10 rounded-full border-2 border-slate-900 bg-amber-500 flex items-center justify-center text-slate-900 font-bold text-xs">SN</div>
+                        <div class="w-10 h-10 rounded-full border-2 border-slate-900 bg-blue-500 flex items-center justify-center text-white font-bold text-xs">AB</div>
+                        <div class="w-10 h-10 rounded-full border-2 border-slate-900 bg-emerald-500 flex items-center justify-center text-white font-bold text-xs">JF</div>
+                        <div class="w-10 h-10 rounded-full border-2 border-slate-900 bg-violet-500 flex items-center justify-center text-white font-bold text-xs">MK</div>
                     </div>
+                    <p class="text-sm text-slate-400 font-medium">+150 clients satisfaits</p>
                 </div>
+            </div>
 
-                <div class="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="glass-card p-8 border-white/5 relative group">
+            <!-- Scrolling Testimonials -->
+            <div class="testimonials-wrapper overflow-hidden">
+                <div class="testimonial-track">
+                    <!-- Card 1 -->
+                    <div class="glass-card p-8 border-white/5 relative min-w-[340px] max-w-[380px]">
+                        <div class="stars mb-3">★★★★★</div>
                         <div class="absolute top-6 right-8 text-amber-500/20 text-5xl font-serif">"</div>
-                        <p class="text-slate-300 italic mb-6 relative z-10">
-                            "Un service impeccable pour l'installation de mon système solaire. Équipe ponctuelle et matériel de haute qualité. Je recommande vivement Vision Tech."
+                        <p class="text-slate-300 italic mb-6 text-sm leading-relaxed">
+                            "Un service impeccable pour mon système solaire. Équipe ponctuelle et matériel haute qualité. Je recommande vivement Vision Tech."
                         </p>
                         <div class="flex items-center">
                             <div class="w-10 h-10 bg-amber-500/20 rounded-full flex items-center justify-center mr-4">
@@ -571,15 +1044,16 @@
                             </div>
                             <div>
                                 <p class="text-white font-bold text-sm">M. Samuel Ngueme</p>
-                                <p class="text-slate-500 text-xs">Particulier - Yaoundé</p>
+                                <p class="text-slate-500 text-xs">Particulier · Yaoundé</p>
                             </div>
                         </div>
                     </div>
-
-                    <div class="glass-card p-8 border-white/5 relative group">
+                    <!-- Card 2 -->
+                    <div class="glass-card p-8 border-white/5 relative min-w-[340px] max-w-[380px]">
+                        <div class="stars mb-3">★★★★★</div>
                         <div class="absolute top-6 right-8 text-amber-500/20 text-5xl font-serif">"</div>
-                        <p class="text-slate-300 italic mb-6 relative z-10">
-                            "La vidéosurveillance de nos entrepôts est désormais gérée de main de maître. La technologie proposée est bluffante de précision."
+                        <p class="text-slate-300 italic mb-6 text-sm leading-relaxed">
+                            "La vidéosurveillance de nos entrepôts est gérée de main de maître. La technologie proposée est bluffante de précision."
                         </p>
                         <div class="flex items-center">
                             <div class="w-10 h-10 bg-amber-500/20 rounded-full flex items-center justify-center mr-4">
@@ -588,6 +1062,105 @@
                             <div>
                                 <p class="text-white font-bold text-sm">Mme Aminata B.</p>
                                 <p class="text-slate-500 text-xs">Directrice Logistique</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Card 3 -->
+                    <div class="glass-card p-8 border-white/5 relative min-w-[340px] max-w-[380px]">
+                        <div class="stars mb-3">★★★★★</div>
+                        <div class="absolute top-6 right-8 text-amber-500/20 text-5xl font-serif">"</div>
+                        <p class="text-slate-300 italic mb-6 text-sm leading-relaxed">
+                            "L'installation climatique de notre bureau a transformé notre confort de travail. Équipe très professionnelle et rapide."
+                        </p>
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-blue-500/20 rounded-full flex items-center justify-center mr-4">
+                                <i class="fas fa-briefcase text-blue-400 text-sm"></i>
+                            </div>
+                            <div>
+                                <p class="text-white font-bold text-sm">M. Jean-François T.</p>
+                                <p class="text-slate-500 text-xs">Chef d'Entreprise · Yaoundé</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Card 4 -->
+                    <div class="glass-card p-8 border-white/5 relative min-w-[340px] max-w-[380px]">
+                        <div class="stars mb-3">★★★★★</div>
+                        <div class="absolute top-6 right-8 text-amber-500/20 text-5xl font-serif">"</div>
+                        <p class="text-slate-300 italic mb-6 text-sm leading-relaxed">
+                            "Nos panneaux solaires sont installés depuis 8 mois. On a réduit notre facture d'électricité de plus de 60%. Excellent investissement !"
+                        </p>
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-emerald-500/20 rounded-full flex items-center justify-center mr-4">
+                                <i class="fas fa-home text-emerald-400 text-sm"></i>
+                            </div>
+                            <div>
+                                <p class="text-white font-bold text-sm">Mme Marie K.</p>
+                                <p class="text-slate-500 text-xs">Propriétaire · Bastos</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Duplicate for infinite loop -->
+                    <div class="glass-card p-8 border-white/5 relative min-w-[340px] max-w-[380px]">
+                        <div class="stars mb-3">★★★★★</div>
+                        <div class="absolute top-6 right-8 text-amber-500/20 text-5xl font-serif">"</div>
+                        <p class="text-slate-300 italic mb-6 text-sm leading-relaxed">
+                            "Un service impeccable pour mon système solaire. Équipe ponctuelle et matériel haute qualité. Je recommande vivement Vision Tech."
+                        </p>
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-amber-500/20 rounded-full flex items-center justify-center mr-4">
+                                <i class="fas fa-user text-amber-500 text-sm"></i>
+                            </div>
+                            <div>
+                                <p class="text-white font-bold text-sm">M. Samuel Ngueme</p>
+                                <p class="text-slate-500 text-xs">Particulier · Yaoundé</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="glass-card p-8 border-white/5 relative min-w-[340px] max-w-[380px]">
+                        <div class="stars mb-3">★★★★★</div>
+                        <div class="absolute top-6 right-8 text-amber-500/20 text-5xl font-serif">"</div>
+                        <p class="text-slate-300 italic mb-6 text-sm leading-relaxed">
+                            "La vidéosurveillance de nos entrepôts est gérée de main de maître. La technologie proposée est bluffante de précision."
+                        </p>
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-amber-500/20 rounded-full flex items-center justify-center mr-4">
+                                <i class="fas fa-building text-amber-500 text-sm"></i>
+                            </div>
+                            <div>
+                                <p class="text-white font-bold text-sm">Mme Aminata B.</p>
+                                <p class="text-slate-500 text-xs">Directrice Logistique</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="glass-card p-8 border-white/5 relative min-w-[340px] max-w-[380px]">
+                        <div class="stars mb-3">★★★★★</div>
+                        <div class="absolute top-6 right-8 text-amber-500/20 text-5xl font-serif">"</div>
+                        <p class="text-slate-300 italic mb-6 text-sm leading-relaxed">
+                            "L'installation climatique de notre bureau a transformé notre confort de travail. Équipe très professionnelle et rapide."
+                        </p>
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-blue-500/20 rounded-full flex items-center justify-center mr-4">
+                                <i class="fas fa-briefcase text-blue-400 text-sm"></i>
+                            </div>
+                            <div>
+                                <p class="text-white font-bold text-sm">M. Jean-François T.</p>
+                                <p class="text-slate-500 text-xs">Chef d'Entreprise · Yaoundé</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="glass-card p-8 border-white/5 relative min-w-[340px] max-w-[380px]">
+                        <div class="stars mb-3">★★★★★</div>
+                        <div class="absolute top-6 right-8 text-amber-500/20 text-5xl font-serif">"</div>
+                        <p class="text-slate-300 italic mb-6 text-sm leading-relaxed">
+                            "Nos panneaux solaires sont installés depuis 8 mois. On a réduit notre facture d'électricité de plus de 60%. Excellent investissement !"
+                        </p>
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-emerald-500/20 rounded-full flex items-center justify-center mr-4">
+                                <i class="fas fa-home text-emerald-400 text-sm"></i>
+                            </div>
+                            <div>
+                                <p class="text-white font-bold text-sm">Mme Marie K.</p>
+                                <p class="text-slate-500 text-xs">Propriétaire · Bastos</p>
                             </div>
                         </div>
                     </div>
@@ -614,7 +1187,7 @@
             <div class="max-w-6xl mx-auto">
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
                     <div class="animate-fade-in">
-                        <h2 class="text-2xl sm:text-4xl md:text-6xl font-black text-white mb-8"
+                        <h2 class="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-black text-white mb-6 md:mb-8"
                             style="font-family: 'Syne', sans-serif;">
                             LANCEZ VOTRE <br>
                             <span class="text-gradient">PROJET.</span>
@@ -624,49 +1197,50 @@
                             transformer vos idées en réalité.
                         </p>
 
-                        <div class="space-y-8">
-                            <div class="flex items-center group">
-                                <div
-                                    class="w-14 h-14 glass-card flex items-center justify-center mr-6 group-hover:bg-amber-500 transition-colors">
+                        <div class="space-y-6 mb-10">
+                            <a href="tel:+237680429304" class="flex items-center group">
+                                <div class="w-14 h-14 glass-card flex items-center justify-center mr-6 group-hover:bg-amber-500 transition-colors">
                                     <i class="fas fa-phone text-amber-500 group-hover:text-slate-900"></i>
                                 </div>
                                 <div>
-                                    <p class="text-slate-500 text-xs font-bold uppercase tracking-widest">Appelez-nous
-                                    </p>
-                                    <p class="text-white font-bold text-lg">680 42 93 04</p>
+                                    <p class="text-slate-500 text-xs font-bold uppercase tracking-widest">Appelez-nous</p>
+                                    <p class="text-white font-bold text-lg group-hover:text-amber-400 transition-colors">680 42 93 04</p>
                                 </div>
-                            </div>
-                            <div class="flex items-center group">
-                                <div
-                                    class="w-14 h-14 glass-card flex items-center justify-center mr-6 group-hover:bg-amber-500 transition-colors">
-                                    <i class="fab fa-whatsapp text-amber-500 group-hover:text-slate-900"></i>
+                            </a>
+                            <a href="https://wa.me/237640914807" target="_blank" rel="noopener" class="flex items-center group">
+                                <div class="w-14 h-14 glass-card flex items-center justify-center mr-6 group-hover:bg-green-500 transition-colors">
+                                    <i class="fab fa-whatsapp text-amber-500 group-hover:text-white"></i>
                                 </div>
                                 <div>
-                                    <p class="text-slate-500 text-xs font-bold uppercase tracking-widest">WhatsApp
-                                        Business</p>
-                                    <p class="text-white font-bold text-lg">640 91 48 07</p>
+                                    <p class="text-slate-500 text-xs font-bold uppercase tracking-widest">WhatsApp Business</p>
+                                    <p class="text-white font-bold text-lg group-hover:text-green-400 transition-colors">640 91 48 07</p>
                                 </div>
-                            </div>
-                            <div class="flex items-center group">
-                                <div
-                                    class="w-14 h-14 glass-card flex items-center justify-center mr-6 group-hover:bg-amber-500 transition-colors">
+                            </a>
+                            <a href="https://www.facebook.com/share/1U4wZGBebn/" target="_blank" rel="noopener" class="flex items-center group">
+                                <div class="w-14 h-14 glass-card flex items-center justify-center mr-6 group-hover:bg-[#1877F2] transition-colors">
+                                    <i class="fab fa-facebook-f text-amber-500 group-hover:text-white text-lg"></i>
+                                </div>
+                                <div>
+                                    <p class="text-slate-500 text-xs font-bold uppercase tracking-widest">Page Facebook</p>
+                                    <p class="text-white font-bold text-lg group-hover:text-blue-400 transition-colors">Vision Tech</p>
+                                </div>
+                            </a>
+                            <a href="mailto:visiontech237@gmail.com" class="flex items-center group">
+                                <div class="w-14 h-14 glass-card flex items-center justify-center mr-6 group-hover:bg-amber-500 transition-colors">
                                     <i class="fas fa-envelope text-amber-500 group-hover:text-slate-900"></i>
                                 </div>
                                 <div>
-                                    <p class="text-slate-500 text-xs font-bold uppercase tracking-widest">Email
-                                        Expertise</p>
-                                    <p class="text-white font-bold text-lg">visiontech237@gmail.com</p>
+                                    <p class="text-slate-500 text-xs font-bold uppercase tracking-widest">Email Expertise</p>
+                                    <p class="text-white font-bold text-lg group-hover:text-amber-400 transition-colors">visiontech237@gmail.com</p>
                                 </div>
-                            </div>
+                            </a>
                             <div class="flex items-center group">
-                                <div
-                                    class="w-14 h-14 glass-card flex items-center justify-center mr-6 group-hover:bg-amber-500 transition-colors">
+                                <div class="w-14 h-14 glass-card flex items-center justify-center mr-6 group-hover:bg-amber-500 transition-colors">
                                     <i class="fas fa-map-marker-alt text-amber-500 group-hover:text-slate-900"></i>
                                 </div>
                                 <div>
-                                    <p class="text-slate-500 text-xs font-bold uppercase tracking-widest">Localisation
-                                    </p>
-                                    <p class="text-white font-bold text-lg">Damas, Yaoundé</p>
+                                    <p class="text-slate-500 text-xs font-bold uppercase tracking-widest">Localisation</p>
+                                    <p class="text-white font-bold text-lg">Douala &amp; Yaoundé</p>
                                 </div>
                             </div>
                         </div>
@@ -745,137 +1319,602 @@
                     </div>
                     <div>
                         <span class="text-2xl font-black text-white tracking-tighter">VISION TECH</span>
-                        <p
-                            class="text-amber-500 text-[10px] font-black tracking-[0.2em] uppercase italic leading-tight mt-1">
+                        <p class="text-amber-500 text-[10px] font-black tracking-[0.2em] uppercase italic leading-tight mt-1">
                             VOTRE SATISFACTION <br>
                             NOTRE PRIORITÉ
                         </p>
                     </div>
                 </div>
 
-                <div class="flex space-x-8 text-slate-500 text-sm font-medium">
-                    <a href="#" class="hover:text-white transition-colors">Confidentialité</a>
-                    <a href="#" class="hover:text-white transition-colors">Mentions Légales</a>
-                    <a href="#" class="hover:text-white transition-colors">Conditions</a>
+                <!-- Social Links -->
+                <div class="flex items-center space-x-4">
+                    <a href="https://www.facebook.com/share/1U4wZGBebn/" target="_blank" rel="noopener"
+                        class="w-10 h-10 glass-card flex items-center justify-center hover:bg-[#1877F2] transition-colors group" aria-label="Facebook">
+                        <i class="fab fa-facebook-f text-slate-400 group-hover:text-white"></i>
+                    </a>
+                    <a href="https://wa.me/237640914807" target="_blank" rel="noopener"
+                        class="w-10 h-10 glass-card flex items-center justify-center hover:bg-green-500 transition-colors group" aria-label="WhatsApp">
+                        <i class="fab fa-whatsapp text-slate-400 group-hover:text-white"></i>
+                    </a>
+                    <a href="mailto:visiontech237@gmail.com"
+                        class="w-10 h-10 glass-card flex items-center justify-center hover:bg-amber-500 transition-colors group" aria-label="Email">
+                        <i class="fas fa-envelope text-slate-400 group-hover:text-slate-900"></i>
+                    </a>
+                    <a href="tel:+237680429304"
+                        class="w-10 h-10 glass-card flex items-center justify-center hover:bg-amber-500 transition-colors group" aria-label="Téléphone">
+                        <i class="fas fa-phone text-slate-400 group-hover:text-slate-900"></i>
+                    </a>
                 </div>
 
                 <div class="text-right">
-                    <p class="text-slate-500 text-sm">© 2024 Vision Tech. Tous droits réservés.</p>
+                    <p class="text-slate-500 text-sm">© 2026 Vision Tech. Tous droits réservés.</p>
+                    <p class="text-slate-600 text-xs mt-1">Damas, Yaoundé · Cameroun</p>
                 </div>
             </div>
         </div>
     </footer>
 
+    <!-- Floating WhatsApp Button -->
+    <a id="whatsapp-float" href="https://wa.me/237640914807?text=Bonjour%20Vision%20Tech%2C%20je%20souhaite%20un%20devis." target="_blank" rel="noopener" aria-label="Contactez-nous sur WhatsApp">
+        <span id="whatsapp-tooltip">Devis rapide 💬</span>
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <!-- Floating Facebook Button -->
+    <a id="facebook-float" href="https://www.facebook.com/share/1U4wZGBebn/" target="_blank" rel="noopener" aria-label="Suivez-nous sur Facebook">
+        <span id="facebook-tooltip">Suivez-nous sur Facebook 📘</span>
+        <i class="fab fa-facebook-f"></i>
+    </a>
+
+    <!-- Scroll to Top Button -->
+    <button id="scroll-top" aria-label="Retour en haut">
+        <i class="fas fa-chevron-up"></i>
+    </button>
+
+    <!-- Lightbox -->
+    <div id="lightbox" role="dialog" aria-modal="true" aria-label="Visionneuse d'images">
+        <button id="lightbox-close" aria-label="Fermer"><i class="fas fa-xmark"></i></button>
+        <button id="lightbox-prev" aria-label="Précédent"><i class="fas fa-chevron-left"></i></button>
+        <img id="lightbox-img" src="" alt="Projet Vision Tech">
+        <button id="lightbox-next" aria-label="Suivant"><i class="fas fa-chevron-right"></i></button>
+        <div id="lightbox-counter"></div>
+    </div>
+
 
 
     <script>
-        // Mobile menu toggle
-        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-        const mobileMenu = document.getElementById('mobile-menu');
+        // ===== THEME TOGGLE =====
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon   = document.getElementById('theme-icon');
 
-        mobileMenuBtn.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
+        function applyTheme(theme) {
+            document.documentElement.dataset.theme = theme;
+            localStorage.setItem('vt-theme', theme);
+
+            // Icon
+            if (theme === 'light') {
+                themeIcon.className = 'fas fa-moon';
+                themeIcon.style.color = '#64748b';
+            } else {
+                themeIcon.className = 'fas fa-sun';
+                themeIcon.style.color = '#f59e0b';
+            }
+
+            // ---- Swap section/div dark backgrounds dynamically ----
+            const darkBgClasses = [
+                'bg-slate-950', 'bg-slate-900',
+                'bg-slate-900/70', 'bg-slate-900/50', 'bg-slate-900/40',
+                'bg-slate-900/35', 'bg-slate-900/30', 'bg-slate-900/20', 'bg-slate-800'
+            ];
+            const elements = document.querySelectorAll('section, main, footer, [class*="bg-slate-9"]');
+
+            elements.forEach(el => {
+                if (theme === 'light') {
+                    // Save original classes once
+                    if (!el.dataset.origClasses) {
+                        el.dataset.origClasses = el.className;
+                    }
+                    let changed = false;
+                    darkBgClasses.forEach(cls => {
+                        if (el.classList.contains(cls)) {
+                            el.classList.remove(cls);
+                            changed = true;
+                        }
+                    });
+                    if (changed) el.classList.add('lt-section-bg');
+                } else {
+                    // Restore original classes
+                    if (el.dataset.origClasses !== undefined) {
+                        el.className = el.dataset.origClasses;
+                        delete el.dataset.origClasses;
+                    }
+                }
+            });
+
+            // Update nav bg if already scrolled
+            const navCard = document.querySelector('nav .glass-card');
+            if (navCard && window.scrollY > 50) {
+                navCard.style.background = theme === 'light'
+                    ? 'rgba(255,255,255,0.97)'
+                    : 'rgba(15,23,42,0.92)';
+            }
+        }
+
+        // Apply saved preference on load, default to 'light'
+        const savedTheme = localStorage.getItem('vt-theme') || 'light';
+        applyTheme(savedTheme);
+
+        themeToggle.addEventListener('click', () => {
+            const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+            applyTheme(next);
         });
 
-        // Smooth scrolling for navigation links
+        // ===== MOBILE MENU =====
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const menuIcon = document.getElementById('menu-icon');
+        let menuOpen = false;
+
+        function closeMobileMenu() {
+            if (!menuOpen) return;
+            menuOpen = false;
+            mobileMenu.classList.remove('open');
+            menuIcon.classList.replace('fa-xmark', 'fa-bars-staggered');
+        }
+
+        function openMobileMenu() {
+            menuOpen = true;
+            mobileMenu.classList.add('open');
+            menuIcon.classList.replace('fa-bars-staggered', 'fa-xmark');
+        }
+
+        mobileMenuBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (menuOpen) {
+                closeMobileMenu();
+            } else {
+                openMobileMenu();
+            }
+        });
+
+        // Close when clicking any link inside mobile menu
+        mobileMenu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                closeMobileMenu();
+            });
+        });
+
+        // Close when clicking outside mobile menu
+        document.addEventListener('click', (e) => {
+            if (menuOpen && !mobileMenu.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
+                closeMobileMenu();
+            }
+        });
+
+        // ===== SMOOTH SCROLLING =====
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
                 const targetId = this.getAttribute('href');
                 if (targetId === '#') return;
-
                 const target = document.querySelector(targetId);
                 if (target) {
                     const offset = 100;
                     const bodyRect = document.body.getBoundingClientRect().top;
                     const elementRect = target.getBoundingClientRect().top;
-                    const elementPosition = elementRect - bodyRect;
-                    const offsetPosition = elementPosition - offset;
-
-                    window.scrollTo({
-                        top: offsetPosition,
-                        behavior: 'smooth'
-                    });
-
-                    // Close mobile menu if open
-                    mobileMenu.classList.add('hidden');
+                    const offsetPosition = elementRect - bodyRect - offset;
+                    window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+                    closeMobileMenu();
                 }
             });
         });
 
-        // Contact form handling
+        // ===== CONTACT FORM =====
         const contactForm = document.getElementById('contact-form');
         if (contactForm) {
             contactForm.addEventListener('submit', function (e) {
                 e.preventDefault();
-
                 const name = document.getElementById('name').value;
                 const email = document.getElementById('email').value;
                 const phone = document.getElementById('phone').value;
                 const service = document.getElementById('service').value;
                 const message = document.getElementById('message').value;
-
                 const whatsappNumber = "237640914807";
                 const text = `*NOUVELLE DEMANDE DE DEVIS - VISION TECH*%0A%0A` +
                     `*Nom:* ${name}%0A` +
                     `*Email:* ${email}%0A` +
-                    `*Téléphone:* ${phone}%0A` +
+                    `*T%C3%A9l%C3%A9phone:* ${phone}%0A` +
                     `*Type de Projet:* ${service}%0A` +
                     `*Message:* ${message}`;
-
                 const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${text}`;
-
-                window.open(whatsappUrl, ' blank');
-
-                // Show feedback
-                const btn = this.querySelector('button');
+                window.open(whatsappUrl, '_blank');
+                const btn = this.querySelector('button[type="submit"]');
                 const originalText = btn.innerText;
-                btn.innerText = 'REDIRECTION VERS WHATSAPP...';
+                btn.innerText = '✓ REDIRECTION VERS WHATSAPP...';
+                btn.style.background = '#22c55e';
                 setTimeout(() => {
                     btn.innerText = originalText;
+                    btn.style.background = '';
                     this.reset();
-                }, 2000);
+                }, 3000);
             });
         }
 
-        // Navbar scroll effect
+        // ===== NAVBAR SCROLL EFFECT + ACTIVE SECTION =====
         const nav = document.querySelector('nav .glass-card');
+        const navLinks = document.querySelectorAll('.nav-link[data-section]');
+        const sections = document.querySelectorAll('section[id]');
+
         window.addEventListener('scroll', () => {
+            // Shrink nav
             if (window.scrollY > 50) {
                 nav.style.paddingTop = '0.5rem';
                 nav.style.paddingBottom = '0.5rem';
-                nav.style.background = 'rgba(15, 23, 42, 0.9)';
+                nav.style.background = 'rgba(15, 23, 42, 0.92)';
             } else {
                 nav.style.paddingTop = '0.75rem';
                 nav.style.paddingBottom = '0.75rem';
                 nav.style.background = 'rgba(255, 255, 255, 0.05)';
             }
+            // Active nav link
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop - 200;
+                if (window.scrollY >= sectionTop) current = section.getAttribute('id');
+            });
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.dataset.section === current) link.classList.add('active');
+            });
+            // Scroll to top visibility
+            const scrollTopBtn = document.getElementById('scroll-top');
+            if (window.scrollY > 400) scrollTopBtn.classList.add('visible');
+            else scrollTopBtn.classList.remove('visible');
         });
 
-        // Intersection Observer for Reveal Animations
-        const observerOptions = {
-            threshold: 0.15,
-            rootMargin: '0px 0px -50px 0px'
-        };
+        // ===== SCROLL TO TOP =====
+        document.getElementById('scroll-top').addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
 
-        const observer = new IntersectionObserver((entries) => {
+        // ===== STATS COUNTER ANIMATION =====
+        const counters = document.querySelectorAll('[data-target]');
+        const statsObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    entry.target.classList.add('animate-fade-in');
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
-                    observer.unobserve(entry.target);
+                    const el = entry.target;
+                    const target = parseInt(el.dataset.target);
+                    const suffix = el.dataset.suffix || '';
+                    let current = 0;
+                    const duration = 1800;
+                    const step = target / (duration / 16);
+                    const timer = setInterval(() => {
+                        current = Math.min(current + step, target);
+                        el.textContent = Math.floor(current) + suffix;
+                        if (current >= target) clearInterval(timer);
+                    }, 16);
+                    statsObserver.unobserve(el);
                 }
             });
-        }, observerOptions);
+        }, { threshold: 0.5 });
+        counters.forEach(c => statsObserver.observe(c));
 
-        document.querySelectorAll('section, .glass-card').forEach(el => {
-            el.style.opacity = '0';
-            el.style.transform = 'translateY(30px)';
-            el.style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
-            observer.observe(el);
+        // ===== LIGHTBOX =====
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightbox-img');
+        const lightboxCounter = document.getElementById('lightbox-counter');
+        let galleryImages = [];
+        let currentIndex = 0;
+
+        function openLightbox(images, index) {
+            galleryImages = images;
+            currentIndex = index;
+            lightboxImg.src = galleryImages[currentIndex];
+            lightboxCounter.textContent = `${currentIndex + 1} / ${galleryImages.length}`;
+            lightbox.style.display = 'flex';
+            requestAnimationFrame(() => lightbox.classList.add('active'));
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            setTimeout(() => {
+                lightbox.style.display = 'none';
+                document.body.style.overflow = '';
+            }, 300);
+        }
+
+        function navigateLightbox(dir) {
+            currentIndex = (currentIndex + dir + galleryImages.length) % galleryImages.length;
+            lightboxImg.style.opacity = '0';
+            setTimeout(() => {
+                lightboxImg.src = galleryImages[currentIndex];
+                lightboxCounter.textContent = `${currentIndex + 1} / ${galleryImages.length}`;
+                lightboxImg.style.opacity = '1';
+            }, 150);
+        }
+
+        lightboxImg.style.transition = 'opacity 0.15s ease';
+        document.getElementById('lightbox-close').addEventListener('click', closeLightbox);
+        document.getElementById('lightbox-prev').addEventListener('click', () => navigateLightbox(-1));
+        document.getElementById('lightbox-next').addEventListener('click', () => navigateLightbox(1));
+        lightbox.addEventListener('click', (e) => { if (e.target === lightbox) closeLightbox(); });
+        document.addEventListener('keydown', (e) => {
+            if (!lightbox.classList.contains('active')) return;
+            if (e.key === 'Escape') closeLightbox();
+            if (e.key === 'ArrowLeft') navigateLightbox(-1);
+            if (e.key === 'ArrowRight') navigateLightbox(1);
         });
+
+        // Attach lightbox to showcase grid images
+        const showcaseSection = document.querySelector('section.py-12');
+        if (showcaseSection) {
+            const imgs = showcaseSection.querySelectorAll('img');
+            const srcs = Array.from(imgs).map(i => i.src);
+            imgs.forEach((img, idx) => {
+                img.parentElement.style.cursor = 'zoom-in';
+                img.parentElement.addEventListener('click', () => openLightbox(srcs, idx));
+            });
+        }
+
+        // ===== SCROLL REVEAL =====
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                    revealObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+        document.querySelectorAll('section > div, .glass-card:not(.testimonial-track .glass-card)').forEach(el => {
+            if (el.closest('#lightbox') || el.closest('nav') || el.id === 'mobile-menu' || el.closest('#site-bg-slideshow') || el.closest('#pwa-install-banner') || el.closest('#ios-install-modal') || el.id === 'slideshow-controls' || el.closest('#slideshow-controls')) return;
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(28px)';
+            el.style.transition = 'opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1), transform 0.7s cubic-bezier(0.4, 0, 0.2, 1)';
+            revealObserver.observe(el);
+        });
+
+        // ==========================================
+        // ===== ANIMATED BACKGROUND SLIDESHOW ======
+        // ==========================================
+        const bgSlides = document.querySelectorAll('.bg-slide');
+        let currentSlideIndex = 0;
+        let slideTimer = null;
+        const SLIDE_DURATION = 5000; // 5 seconds per slide
+
+        function showSlide(index) {
+            if (!bgSlides.length) return;
+            currentSlideIndex = (index + bgSlides.length) % bgSlides.length;
+
+            bgSlides.forEach((slide, idx) => {
+                if (idx === currentSlideIndex) {
+                    slide.classList.add('active');
+                } else {
+                    slide.classList.remove('active');
+                }
+            });
+        }
+
+        function startSlideTimer() {
+            if (slideTimer) clearInterval(slideTimer);
+            slideTimer = setInterval(() => {
+                showSlide(currentSlideIndex + 1);
+            }, SLIDE_DURATION);
+        }
+
+        // Initialize slideshow
+        showSlide(0);
+        startSlideTimer();
+
+        // ==========================================
+        // ===== 1-CLICK APP DOWNLOAD & INSTALL =====
+        // ==========================================
+        let deferredPrompt = null;
+        const btnInstallNav = document.getElementById('btn-install-app');
+        const btnInstallMobile = document.getElementById('mobile-install-btn');
+        const pwaBanner = document.getElementById('pwa-install-banner');
+        const btnBannerInstall = document.getElementById('btn-banner-install');
+        const btnBannerClose = document.getElementById('btn-banner-close');
+        const iosModal = document.getElementById('ios-install-modal');
+        const closeIosModal = document.getElementById('close-ios-modal');
+        const okIosModal = document.getElementById('ok-ios-modal');
+
+        const isStandalone = window.matchMedia('(display-mode: standalone)').matches || 
+                             window.navigator.standalone === true || 
+                             document.referrer.includes('android-app://');
+
+        const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        const isAndroid = /Android/i.test(navigator.userAgent);
+        const isMobile = isAndroid || isIos || /Mobi|Tablet|Opera Mini/i.test(navigator.userAgent);
+
+        // Capture PWA install prompt event
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            console.log('[PWA] beforeinstallprompt capturé avec succès.');
+
+            if (!localStorage.getItem('visiontech_pwa_dismissed') && !isStandalone) {
+                setTimeout(() => {
+                    if (pwaBanner) pwaBanner.classList.add('visible');
+                }, 2000);
+            }
+        });
+
+        // Toast feedback
+        function showDownloadToast(message) {
+            const toast = document.getElementById('download-success-toast');
+            if (!toast) return;
+            if (message) toast.querySelector('span').textContent = message;
+            toast.style.transform = 'translate(-50%, 0)';
+            toast.style.opacity = '1';
+            toast.style.pointerEvents = 'auto';
+            setTimeout(() => {
+                toast.style.transform = 'translate(-50%, -40px)';
+                toast.style.opacity = '0';
+                toast.style.pointerEvents = 'none';
+            }, 4500);
+        }
+
+        // Action direct 1-clic : déclenche instantanément le téléchargement selon l'appareil
+        async function triggerInstantDownload() {
+            // 1. Mobile Android (ou tout appareil mobile non-iOS) : Téléchargement direct de l'APK natif
+            if (isAndroid || (isMobile && !isIos)) {
+                // Déclencher le téléchargement immédiat de VisionTech.apk
+                const apkLink = document.createElement('a');
+                apkLink.href = 'VisionTech.apk';
+                apkLink.download = 'VisionTech.apk';
+                document.body.appendChild(apkLink);
+                apkLink.click();
+                document.body.removeChild(apkLink);
+
+                showDownloadToast("✓ Téléchargement de l'application (VisionTech.apk) lancé ! Ouvrez le fichier téléchargé pour installer.");
+                if (pwaBanner) pwaBanner.classList.remove('visible');
+
+                // Si PWA prompt disponible en parallèle, le proposer
+                if (deferredPrompt) {
+                    try {
+                        deferredPrompt.prompt();
+                        deferredPrompt = null;
+                    } catch (e) {}
+                }
+                return;
+            }
+
+            // 2. Mobile iOS (iPhone / iPad) : Guide officiel Safari
+            if (isIos) {
+                if (iosModal) {
+                    iosModal.classList.remove('hidden');
+                    iosModal.classList.add('flex');
+                }
+                return;
+            }
+
+            // 3. Ordinateur (PC / Mac / Bureau)
+            if (deferredPrompt) {
+                try {
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    console.log('[PWA] Résultat installation:', outcome);
+                    deferredPrompt = null;
+                    if (pwaBanner) pwaBanner.classList.remove('visible');
+                    showDownloadToast("✓ Application Vision Tech prête !");
+                    return;
+                } catch (err) {}
+            }
+
+            // Téléchargement direct immédiat du raccourci Bureau Windows
+            const appUrl = window.location.href.split('#')[0];
+            const shortcutContent = `[InternetShortcut]\r\nURL=${appUrl}\r\nIconIndex=0\r\nHotKey=0\r\n`;
+            const blob = new Blob([shortcutContent], { type: 'application/octet-stream' });
+            const downloadUrl = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = downloadUrl;
+            a.download = 'VisionTech.url';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            setTimeout(() => URL.revokeObjectURL(downloadUrl), 2000);
+
+            showDownloadToast("✓ Téléchargement lancé ! Raccourci Vision Tech enregistré.");
+            if (pwaBanner) pwaBanner.classList.remove('visible');
+        }
+
+        if (btnInstallNav) btnInstallNav.addEventListener('click', triggerInstantDownload);
+        if (btnInstallMobile) btnInstallMobile.addEventListener('click', triggerInstantDownload);
+        if (btnBannerInstall) btnBannerInstall.addEventListener('click', triggerInstantDownload);
+
+        if (btnBannerClose) {
+            btnBannerClose.addEventListener('click', () => {
+                if (pwaBanner) pwaBanner.classList.remove('visible');
+                localStorage.setItem('visiontech_pwa_dismissed', '1');
+            });
+        }
+
+        if (closeIosModal) {
+            closeIosModal.addEventListener('click', () => {
+                iosModal.classList.add('hidden');
+                iosModal.classList.remove('flex');
+            });
+        }
+        if (okIosModal) {
+            okIosModal.addEventListener('click', () => {
+                iosModal.classList.add('hidden');
+                iosModal.classList.remove('flex');
+            });
+        }
+
+        window.addEventListener('appinstalled', () => {
+            console.log('[PWA] Vision Tech installée avec succès !');
+            deferredPrompt = null;
+            if (pwaBanner) pwaBanner.classList.remove('visible');
+            showDownloadToast("✓ Vision Tech installée sur votre appareil !");
+        });
+
+        // Register Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log('[PWA] Service Worker actif:', reg.scope))
+                    .catch(err => console.warn('[PWA] SW error:', err));
+            });
+        }
     </script>
+
+    <!-- Download Success Feedback Toast -->
+    <div id="download-success-toast" class="fixed top-24 left-1/2 z-[9999] px-6 py-3.5 rounded-2xl bg-amber-500 text-slate-950 font-black text-sm shadow-2xl flex items-center gap-3 transition-all duration-300 pointer-events-none" style="transform: translate(-50%, -40px); opacity: 0;">
+        <i class="fas fa-circle-check text-xl"></i>
+        <span>Téléchargement lancé avec succès !</span>
+    </div>
+
+    <!-- PWA Install / Download Floating Banner -->
+    <div id="pwa-install-banner" class="fixed bottom-6 left-4 right-4 sm:left-6 sm:right-auto sm:max-w-md z-50 glass-card p-4 rounded-2xl border border-amber-500/40 shadow-2xl flex items-center justify-between gap-3">
+        <div class="flex items-center gap-3 min-w-0">
+            <div class="w-12 h-12 bg-white rounded-xl p-1.5 flex-shrink-0 shadow-md">
+                <img src="data/icon-192.png" alt="Vision Tech" class="w-full h-full object-contain">
+            </div>
+            <div class="min-w-0 text-left">
+                <div class="text-sm font-black text-white truncate">Application Vision Tech</div>
+                <div class="text-xs text-slate-300 truncate">Accès direct sans ouvrir le navigateur</div>
+            </div>
+        </div>
+        <div class="flex items-center gap-2 flex-shrink-0">
+            <button id="btn-banner-install" class="px-3.5 py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs rounded-xl shadow-md transition-all transform hover:scale-105 flex items-center gap-1.5">
+                <i class="fas fa-download"></i> Télécharger
+            </button>
+            <button id="btn-banner-close" class="text-slate-400 hover:text-white p-1 text-base" aria-label="Fermer">&times;</button>
+        </div>
+    </div>
+
+    <!-- iOS Install Guided Modal -->
+    <div id="ios-install-modal" class="fixed inset-0 z-[10000] hidden items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
+        <div class="glass-card max-w-sm w-full p-6 rounded-3xl border border-amber-500/40 text-center relative shadow-2xl">
+            <button id="close-ios-modal" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl" aria-label="Fermer">&times;</button>
+            <div class="w-16 h-16 bg-white rounded-2xl mx-auto p-2 mb-4 shadow-xl flex items-center justify-center">
+                <img src="data/icon-192.png" alt="Vision Tech" class="w-full h-full object-contain">
+            </div>
+            <h3 class="text-xl font-black text-white mb-2">Installer l'application</h3>
+            <p class="text-slate-300 text-sm mb-6">Ajoutez Vision Tech sur votre écran d'accueil iPhone ou iPad :</p>
+            <div class="space-y-4 text-left text-sm bg-white/5 p-4 rounded-2xl border border-white/10 mb-6">
+                <div class="flex items-center gap-3 text-slate-200">
+                    <span class="w-7 h-7 rounded-full bg-amber-500 text-slate-950 font-black flex items-center justify-center text-xs flex-shrink-0">1</span>
+                    <span>Touchez l'icône de partage <strong><i class="fas fa-arrow-up-from-bracket text-amber-400 mx-1"></i> Partager</strong> en bas de Safari.</span>
+                </div>
+                <div class="flex items-center gap-3 text-slate-200">
+                    <span class="w-7 h-7 rounded-full bg-amber-500 text-slate-950 font-black flex items-center justify-center text-xs flex-shrink-0">2</span>
+                    <span>Faites défiler et touchez <strong><i class="fas fa-square-plus text-amber-400 mx-1"></i> Sur l'écran d'accueil</strong>.</span>
+                </div>
+                <div class="flex items-center gap-3 text-slate-200">
+                    <span class="w-7 h-7 rounded-full bg-amber-500 text-slate-950 font-black flex items-center justify-center text-xs flex-shrink-0">3</span>
+                    <span>Touchez <strong>« Ajouter »</strong> en haut à droite.</span>
+                </div>
+            </div>
+            <button id="ok-ios-modal" class="w-full py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl transition-all">
+                C'est compris !
+            </button>
+        </div>
+    </div>
 </body>
 
 </html>
