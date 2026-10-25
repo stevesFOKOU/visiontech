@@ -9,14 +9,10 @@ const STATIC_ASSETS = [
     '/data/logo_watermark.png',
     '/data/icon-192.png',
     '/data/icon-512.png',
-    '/data/favicon.png',
-    '/electricite.html',
-    '/climatisation.html',
-    '/solaire.html',
-    '/videosurveillance.html'
+    '/data/favicon.png'
 ];
 
-// Install: Cache critical assets with individual fail-safes
+// Install: Cache critical core shell assets
 self.addEventListener('install', (event) => {
     self.skipWaiting();
     event.waitUntil(
@@ -25,8 +21,7 @@ self.addEventListener('install', (event) => {
                 try {
                     await cache.add(asset);
                 } catch (e) {
-                    // Ne jamais bloquer l'installation si un asset échoue
-                    console.warn('[SW] Asset non critique ignoré au cache:', asset);
+                    // Silently ignore non-critical asset
                 }
             }
         })
@@ -67,8 +62,7 @@ self.addEventListener('fetch', (event) => {
 
     const url = new URL(request.url);
 
-    // Ne pas intercepter les requêtes externes (CDNs, Google Fonts, etc.)
-    // Laisser le navigateur les gérer directement
+    // Ne pas intercepter les requêtes externes (CDNs, Google Fonts, extensions du navigateur)
     if (url.origin !== self.location.origin) {
         return;
     }
@@ -85,16 +79,16 @@ self.addEventListener('fetch', (event) => {
                     return networkResponse;
                 })
                 .catch(async () => {
-                    // Si le réseau traîne ou échoue, renvoyer immédiatement la version en cache
+                    // Si le réseau traîne ou échoue, renvoyer la version en cache
                     const cached = await caches.match(request);
                     if (cached) return cached;
 
                     const indexCached = await caches.match('/index.html') || await caches.match('/');
                     if (indexCached) return indexCached;
 
-                    // Fallback ultime : ne jamais renvoyer undefined pour ne pas crasher le navigateur
+                    // Fallback ultime propre
                     return new Response(
-                        '<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Vision Tech</title><style>body{background:#0a1628;color:#f8fafc;font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;text-align:center;padding:20px;}</style></head><body><div><h2 style="color:#f59e0b">Vision Tech</h2><p>Connexion lente détectée. Chargement en cours...</p><button onclick="location.reload()" style="background:#f59e0b;color:#0a1628;border:none;padding:12px 24px;border-radius:8px;font-weight:bold;cursor:pointer;margin-top:10px;">Réessayer</button></div></body></html>',
+                        '<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Vision Tech</title><style>body{background:#0a1628;color:#f8fafc;font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;text-align:center;padding:20px;}</style></head><body><div><h2 style="color:#f59e0b">Vision Tech</h2><p>Connexion lente. Chargement en cours...</p><button onclick="location.reload()" style="background:#f59e0b;color:#0a1628;border:none;padding:12px 24px;border-radius:8px;font-weight:bold;cursor:pointer;margin-top:10px;">Réessayer</button></div></body></html>',
                         { headers: { 'Content-Type': 'text/html; charset=utf-8' } }
                     );
                 })
@@ -115,7 +109,6 @@ self.addEventListener('fetch', (event) => {
                 }
                 return networkResponse;
             }).catch(() => {
-                // En cas d'échec total d'une image/asset, renvoyer une réponse vide propre
                 return new Response('', { status: 404, statusText: 'Not Found' });
             });
         })
