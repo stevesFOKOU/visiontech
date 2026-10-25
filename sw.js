@@ -1,33 +1,39 @@
-const CACHE_NAME = 'visiontech-cache-v1';
+// Vision Tech Service Worker - Ultra-Resilient v2
+const CACHE_NAME = 'visiontech-cache-v2';
 const STATIC_ASSETS = [
-    './',
-    './index.html',
-    './index.css',
-    './manifest.webmanifest',
-    './data/logo.jpeg',
-    './data/logo_watermark.png',
-    './data/icon-192.png',
-    './data/icon-512.png',
-    './data/apple-touch-icon.png',
-    './data/favicon.png',
-    './electricite.html',
-    './climatisation.html',
-    './solaire.html',
-    './videosurveillance.html'
+    '/',
+    '/index.html',
+    '/index.css',
+    '/manifest.webmanifest',
+    '/data/logo.jpeg',
+    '/data/logo_watermark.png',
+    '/data/icon-192.png',
+    '/data/icon-512.png',
+    '/data/favicon.png',
+    '/electricite.html',
+    '/climatisation.html',
+    '/solaire.html',
+    '/videosurveillance.html'
 ];
 
-// Install: Cache critical shell assets
+// Install: Cache critical assets with individual fail-safes
 self.addEventListener('install', (event) => {
+    self.skipWaiting();
     event.waitUntil(
-        caches.open(CACHE_NAME).then((cache) => {
-            return cache.addAll(STATIC_ASSETS).catch((err) => {
-                console.warn('[SW] Non-critical asset failed to cache:', err);
-            });
-        }).then(() => self.skipWaiting())
+        caches.open(CACHE_NAME).then(async (cache) => {
+            for (const asset of STATIC_ASSETS) {
+                try {
+                    await cache.add(asset);
+                } catch (e) {
+                    // Ne jamais bloquer l'installation si un asset échoue
+                    console.warn('[SW] Asset non critique ignoré au cache:', asset);
+                }
+            }
+        })
     );
 });
 
-// Activate: Clean old caches and claim clients immediately
+// Activate: Purge ALL older caches and claim clients immediately
 self.addEventListener('activate', (event) => {
     event.waitUntil(
         caches.keys().then((keys) => {
@@ -38,43 +44,80 @@ self.addEventListener('activate', (event) => {
     );
 });
 
-// Fetch: Network-first for pages, Stale-while-revalidate for assets
+// Helper: Network fetch with timeout (3.5 seconds)
+function fetchWithTimeout(request, timeoutMs = 3500) {
+    return new Promise((resolve, reject) => {
+        const timer = setTimeout(() => reject(new Error('Network timeout')), timeoutMs);
+        fetch(request)
+            .then((response) => {
+                clearTimeout(timer);
+                resolve(response);
+            })
+            .catch((err) => {
+                clearTimeout(timer);
+                reject(err);
+            });
+    });
+}
+
+// Fetch: Secure handling that NEVER returns undefined
 self.addEventListener('fetch', (event) => {
     const request = event.request;
     if (request.method !== 'GET') return;
 
-    // Handle HTML navigations
+    const url = new URL(request.url);
+
+    // Ne pas intercepter les requêtes externes (CDNs, Google Fonts, etc.)
+    // Laisser le navigateur les gérer directement
+    if (url.origin !== self.location.origin) {
+        return;
+    }
+
+    // 1. Navigation (pages HTML)
     if (request.mode === 'navigate') {
         event.respondWith(
-            fetch(request)
+            fetchWithTimeout(request, 3000)
                 .then((networkResponse) => {
-                    const responseClone = networkResponse.clone();
-                    caches.open(CACHE_NAME).then((cache) => cache.put(request, responseClone));
+                    if (networkResponse && networkResponse.ok) {
+                        const clone = networkResponse.clone();
+                        caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
+                    }
                     return networkResponse;
                 })
-                .catch(() => {
-                    return caches.match(request).then((cachedResponse) => {
-                        return cachedResponse || caches.match('./index.html');
-                    });
+                .catch(async () => {
+                    // Si le réseau traîne ou échoue, renvoyer immédiatement la version en cache
+                    const cached = await caches.match(request);
+                    if (cached) return cached;
+
+                    const indexCached = await caches.match('/index.html') || await caches.match('/');
+                    if (indexCached) return indexCached;
+
+                    // Fallback ultime : ne jamais renvoyer undefined pour ne pas crasher le navigateur
+                    return new Response(
+                        '<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Vision Tech</title><style>body{background:#0a1628;color:#f8fafc;font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;text-align:center;padding:20px;}</style></head><body><div><h2 style="color:#f59e0b">Vision Tech</h2><p>Connexion lente détectée. Chargement en cours...</p><button onclick="location.reload()" style="background:#f59e0b;color:#0a1628;border:none;padding:12px 24px;border-radius:8px;font-weight:bold;cursor:pointer;margin-top:10px;">Réessayer</button></div></body></html>',
+                        { headers: { 'Content-Type': 'text/html; charset=utf-8' } }
+                    );
                 })
         );
         return;
     }
 
-    // Handle assets (images, css, js, fonts)
+    // 2. Fichiers statiques internes (CSS, JS, Images locales)
     event.respondWith(
         caches.match(request).then((cachedResponse) => {
-            const fetchPromise = fetch(request)
-                .then((networkResponse) => {
-                    if (networkResponse && networkResponse.status === 200) {
-                        const responseClone = networkResponse.clone();
-                        caches.open(CACHE_NAME).then((cache) => cache.put(request, responseClone));
-                    }
-                    return networkResponse;
-                })
-                .catch(() => cachedResponse);
-
-            return cachedResponse || fetchPromise;
+            if (cachedResponse) {
+                return cachedResponse;
+            }
+            return fetch(request).then((networkResponse) => {
+                if (networkResponse && networkResponse.status === 200) {
+                    const clone = networkResponse.clone();
+                    caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
+                }
+                return networkResponse;
+            }).catch(() => {
+                // En cas d'échec total d'une image/asset, renvoyer une réponse vide propre
+                return new Response('', { status: 404, statusText: 'Not Found' });
+            });
         })
     );
 });
